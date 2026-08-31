@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+build/
+dist/
+*.egg-info/
+
+# Ambientes virtuais
+.venv/
+venv/
+
+# uv
+.uv-cache/
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Dados brutos e externos: baixados por `make data`, pesados demais para versionar
+data/raw/*
+data/external/*
+!data/raw/.gitkeep
+!data/external/.gitkeep
+
+# A Gold e as bases analiticas sao versionadas de proposito: deixam os notebooks
+# e os modelos reproduziveis sem baixar nada. Excecao: a base de aluno completa,
+# que passa do limite razoavel para o git (fica em data/processed e e regenerada).
+data/processed/abt_aluno.parquet
+
+# Modelos: os pipelines finais sao versionados; artefatos intermediarios nao
+models/tmp/
+
+# Logs e temporarios
+*.log
+tmp/
+.pytest_cache/
+.ruff_cache/
+
+# Variaveis de ambiente locais
+.env
