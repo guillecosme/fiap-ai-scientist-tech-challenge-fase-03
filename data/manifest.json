@@ -1,0 +1,156 @@
+{
+  "ica_municipios_2023": {
+    "url": "http://download.inep.gov.br/avaliacao_da_alfabetizacao/resultados_e_metas_municipios.xlsx",
+    "path": "data/raw/inep/ica_municipios_2023.xlsx",
+    "sha256": "70a4b1e36f16a16090aaa226101f973cae26024663cdb10b3334bb8009c2bcc7",
+    "bytes": 825415,
+    "downloaded_at": "2026-09-14T13:23:55+00:00"
+  },
+  "ica_municipios_2024": {
+    "url": "http://download.inep.gov.br/alfabetiza_brasil/resultados_e_metas_municipios_2024.xlsx",
+    "path": "data/raw/inep/ica_municipios_2024.xlsx",
+    "sha256": "64cf09f3dc0d3f9c6b1298f11ef4a8f3803e91d038f98fe99379558f858363e7",
+    "bytes": 629758,
+    "downloaded_at": "2026-09-14T13:23:56+00:00"
+  },
+  "ica_municipios_2025": {
+    "url": "http://download.inep.gov.br/avaliacao_da_alfabetizacao/resultados/resultados_e_metas_municipios_2025_3.xlsx",
+    "path": "data/raw/inep/ica_municipios_2025.xlsx",
+    "sha256": "709c7eeba34d9c91e7f193e6c2b25e453ec7b535a6d8ac7e39c095bd0c24eb60",
+    "bytes": 530904,
+    "downloaded_at": "2026-09-14T13:23:57+00:00"
+  },
+  "ica_ufs_2023": {
+    "url": "http://download.inep.gov.br/avaliacao_da_alfabetizacao/resultados_e_metas_ufs.xlsx",
+    "path": "data/raw/inep/ica_ufs_2023.xlsx",
+    "sha256": "b17627bdfbe11d95aa607038df3ad38cba759b0bc4decde6626f5bf226cd2111",
+    "bytes": 16139,
+    "downloaded_at": "2026-09-14T13:23:57+00:00"
+  },
+  "ica_ufs_2024": {
+    "url": "http://download.inep.gov.br/alfabetiza_brasil/resultados_e_metas_ufs_2024_2.xlsx",
+    "path": "data/raw/inep/ica_ufs_2024.xlsx",
+    "sha256": "99bfaa63ddc0109570e27933d23af2def5c03073918f5fca042b274a51ab958c",
+    "bytes": 15230,
+    "downloaded_at": "2026-09-14T13:23:57+00:00"
+  },
+  "ica_ufs_2025": {
+    "url": "http://download.inep.gov.br/avaliacao_da_alfabetizacao/resultados/resultados_e_metas_ufs_2025_v1.xlsx",
+    "path": "data/raw/inep/ica_ufs_2025.xlsx",
+    "sha256": "6c2d58d93f2eb0b502e4a303eb7b3946329019b3214066f271eaac9880be1daa",
+    "bytes": 18042,
+    "downloaded_at": "2026-09-14T13:23:57+00:00"
+  },
+  "microdados_2024": {
+    "url": "http://download.inep.gov.br/dados_abertos/microdados_avaliacao_da_alfabetizacao_2024.zip",
+    "path": "data/raw/inep/microdados_2024.zip",
+    "sha256": "1d698162ff6b478dfd4a923dd858fc7b0f1704679a438d8334e0ed1046ccba7e",
+    "bytes": 21704063,
+    "downloaded_at": "2026-09-14T13:24:02+00:00"
+  },
+  "microdados_2025": {
+    "url": "http://download.inep.gov.br/dados_abertos/microdados_AEEB_2025.zip",
+    "path": "data/raw/inep/microdados_2025.zip",
+    "sha256": "3de5a867e49e38548d220ef547f05416665f6969b25c1860f9a6f5590f88c874",
+    "bytes": 43956518,
+    "downloaded_at": "2026-09-14T13:24:12+00:00"
+  },
+  "inse_2023": {
+    "url": "http://download.inep.gov.br/informacoes_estatisticas/indicadores_educacionais/2023/nivel_socioeconomico/INSE_2023_municipios.xlsx",
+    "path": "data/external/inep/inse_2023_municipios.xlsx",
+    "sha256": "a8b9eef6d32d51e14f8bcfc3892a776efa406dbe48a7b703e8d4f54c62cdddaa",
+    "bytes": 11483563,
+    "downloaded_at": "2026-09-14T13:24:16+00:00"
+  },
+  "afd_2024": {
+    "url": "http://download.inep.gov.br/informacoes_estatisticas/indicadores_educacionais/2024/AFD_2024_MUNICIPIOS.zip",
+    "path": "data/external/inep/afd_2024.zip",
+    "sha256": "83c7bec9c432e4f06b0d386530c134ab4e36576b2e7db076a702605a916676c4",
+    "bytes": 23350816,
+    "downloaded_at": "2026-09-14T13:24:22+00:00"
+  },
+  "atu_2024": {
+    "url": "http://download.inep.gov.br/informacoes_estatisticas/indicadores_educacionais/2024/ATU_2024_MUNICIPIOS.zip",
+    "path": "data/external/inep/atu_2024.zip",
+    "sha256": "de458e95333764b846dfb1859a99e0474a6a0de9dbf77b4fe107b6f4ab7486e7",
+    "bytes": 18049510,
+    "downloaded_at": "2026-09-14T13:24:26+00:00"
+  },
+  "tdi_2024": {
+    "url": "http://download.inep.gov.br/informacoes_estatisticas/indicadores_educacionais/2024/TDI_2024_MUNICIPIOS.zip",
+    "path": "data/external/inep/tdi_2024.zip",
+    "sha256": "921bf32207949cdc29e40554fdb68b65e914daf019ce5358054deb60401d5bdf",
+    "bytes": 14506127,
+    "downloaded_at": "2026-09-14T13:24:31+00:00"
+  },
+  "dsu_2024": {
+    "url": "http://download.inep.gov.br/informacoes_estatisticas/indicadores_educacionais/2024/DSU_2024_MUNICIPIOS.zip",
+    "path": "data/external/inep/dsu_2024.zip",
+    "sha256": "7bc3495d146ef37faff207c2bea2e56606f8d25b6f01e563198eec7f93bb101b",
+    "bytes": 11132787,
+    "downloaded_at": "2026-09-14T13:24:35+00:00"
+  },
+  "afd_2025": {
+    "url": "http://download.inep.gov.br/informacoes_estatisticas/indicadores_educacionais/2025/AFD_2025_MUNICIPIOS.zip",
+    "path": "data/external/inep/afd_2025.zip",
+    "sha256": "0c02a884eb99ffe98bc4775ebe1c4cbcdd84eca374299947a5bf530d6b13110a",
+    "bytes": 23561400,
+    "downloaded_at": "2026-09-14T13:24:41+00:00"
+  },
+  "atu_2025": {
+    "url": "http://download.inep.gov.br/informacoes_estatisticas/indicadores_educacionais/2025/ATU_2025_MUNICIPIOS.zip",
+    "path": "data/external/inep/atu_2025.zip",
+    "sha256": "1d14f67c2d863a8426f0764e403284920e2a014f690ecea3fa9c238b03ab4716",
+    "bytes": 18043953,
+    "downloaded_at": "2026-09-14T13:24:47+00:00"
+  },
+  "tdi_2025": {
+    "url": "http://download.inep.gov.br/informacoes_estatisticas/indicadores_educacionais/2025/TDI_2025_MUNICIPIOS.zip",
+    "path": "data/external/inep/tdi_2025.zip",
+    "sha256": "91f8f4c9f3609c7c3c9d4af9318371d6ab9c91c13e8dadeaef3e56e7a5c38a9b",
+    "bytes": 14418115,
+    "downloaded_at": "2026-09-14T13:24:50+00:00"
+  },
+  "dsu_2025": {
+    "url": "http://download.inep.gov.br/informacoes_estatisticas/indicadores_educacionais/2025/DSU_2025_MUNICIPIOS.zip",
+    "path": "data/external/inep/dsu_2025.zip",
+    "sha256": "e8761fbc98f3e115a69f38ea9bf22b3ff3d34ac3ae846bc59a6ded9458319df5",
+    "bytes": 11254737,
+    "downloaded_at": "2026-09-14T13:24:53+00:00"
+  },
+  "rend_2023": {
+    "url": "http://download.inep.gov.br/informacoes_estatisticas/indicadores_educacionais/2023/tx_rend_municipios_2023.zip",
+    "path": "data/external/inep/rend_2023.zip",
+    "sha256": "574de50d82cdd12af7674e2f7e1089ce98d0571b7f0bb36e1d102f985e577b6a",
+    "bytes": 34538780,
+    "downloaded_at": "2026-09-14T13:25:02+00:00"
+  },
+  "rend_2024": {
+    "url": "http://download.inep.gov.br/informacoes_estatisticas/indicadores_educacionais/2024/tx_rend_municipios_2024.zip",
+    "path": "data/external/inep/rend_2024.zip",
+    "sha256": "57efe4b7e0387bdf2d80c72bb75dfef9f14a35a30daceba8d05fcf75faede976",
+    "bytes": 34487202,
+    "downloaded_at": "2026-09-14T13:25:11+00:00"
+  },
+  "ideb_anos_iniciais": {
+    "url": "http://download.inep.gov.br/ideb/resultados/divulgacao_anos_iniciais_municipios_2025.zip",
+    "path": "data/external/inep/ideb_anos_iniciais.zip",
+    "sha256": "89100286327ab07a4b1318ba51974d62da90af334f663bedf6374cb67298a3e7",
+    "bytes": 25308289,
+    "downloaded_at": "2026-09-14T13:25:18+00:00"
+  },
+  "ibge_censo_2022": {
+    "url": "https://apisidra.ibge.gov.br/values/t/4714/n6/all/v/93,6318,614/p/2022",
+    "path": "data/external/ibge/censo_2022.json",
+    "sha256": "97a0170bfec36ec2b1efeb41f43d2cbf3901ec601fa294e548652b083cf40174",
+    "bytes": 4651939,
+    "downloaded_at": "2026-09-14T13:25:21+00:00"
+  },
+  "ibge_pib": {
+    "url": "https://apisidra.ibge.gov.br/values/t/5938/n6/all/v/37,516,520,528,6574/p/2022",
+    "path": "data/external/ibge/pib_municipal.json",
+    "sha256": "760a035a85ea32ff8b39c24a39156aafd1130cc310743076b213fb7f381f59b0",
+    "bytes": 10352960,
+    "downloaded_at": "2026-09-14T13:29:36+00:00"
+  }
+}
