@@ -131,6 +131,77 @@ def read_ica_ufs(path: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
 
 
 # ---------------------------------------------------------------------------
+# Microdados no grao de aluno
+# ---------------------------------------------------------------------------
+
+ALUNO_COLS = {
+    "NU_ANO_AVALIACAO": "ano",
+    "SG_UF": "sigla_uf",
+    "ID_ALUNO": "id_aluno",
+    "ID_ESCOLA": "id_escola",
+    "TP_DEPENDENCIA": "rede",
+    "CO_MUNICIPIO": "id_municipio",
+    "IN_PRESENCA_LP": "presente",
+    "IN_PREENCHIMENTO_LP": "preencheu",
+    "VL_PESO_ALUNO_LP": "peso",
+    "VL_PROFICIENCIA_LP": "proficiencia",
+    "IN_ALFABETIZADO": "alfabetizado",
+}
+
+
+def read_microdados_alunos(path: Path) -> pd.DataFrame:
+    """TS_ALUNO.csv: um registro por aluno avaliado (presentes e ausentes).
+
+    So as colunas usadas no projeto sao lidas; o arquivo de 2025 traz tambem as
+    respostas por item, que ficam de fora.
+    """
+    dtypes = {
+        "NU_ANO_AVALIACAO": "int16",
+        "SG_UF": "category",
+        "ID_ALUNO": "int64",
+        # em 2025 ha alunos sem escola ou municipio informado, por isso tipos anulaveis
+        "ID_ESCOLA": "Int64",
+        "TP_DEPENDENCIA": "Int8",
+        "CO_MUNICIPIO": "Int64",
+        "IN_PRESENCA_LP": "int8",
+        "IN_PREENCHIMENTO_LP": "int8",
+        "IN_ALFABETIZADO": "int8",
+    }
+    df = pd.read_csv(
+        path,
+        sep=";",
+        encoding="latin-1",
+        usecols=list(ALUNO_COLS),
+        dtype=dtypes,
+        decimal=".",
+    )
+    df = df.rename(columns=ALUNO_COLS)
+    df["peso"] = _to_num(df["peso"]).astype("float32")
+    df["proficiencia"] = _to_num(df["proficiencia"]).astype("float32")
+    df["rede"] = df["rede"].map(REDE_MICRODADOS).astype("category")
+    return df
+
+
+def read_microdados_municipio(path: Path) -> pd.DataFrame:
+    """TS_MUNICIPIO.csv: agregados por municipio e tipo de rede (ID_TIPO_REDE)."""
+    df = pd.read_csv(path, sep=";", encoding="latin-1", decimal=".")
+    rede = {0: "total", 1: "federal", 2: "estadual", 3: "municipal", 4: "privada", 5: "publica"}
+    out = pd.DataFrame(
+        {
+            "ano": df["NU_ANO_AVALIACAO"].astype("int16"),
+            "id_municipio": df["CO_MUNICIPIO"].astype("int64"),
+            "sigla_uf": df["SG_UF"].astype(str),
+            "rede": df["ID_TIPO_REDE"].map(rede),
+            "indicador_pct": _to_num(df["PC_ALUNO_ALFABETIZADO"]),
+            "media_proficiencia": _to_num(df["VL_MEDIA_LP"]),
+        }
+    )
+    for k in range(9):
+        out[f"pct_nivel_{k}"] = _to_num(df[f"PC_ALUNO_NIVEL_{k}_LP"])
+    return out
+
+
+# ---------------------------------------------------------------------------
 # INSE e indicadores do Censo Escolar
 # ---------------------------------------------------------------------------
 

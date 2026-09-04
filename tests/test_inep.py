@@ -103,3 +103,22 @@ def test_ideb_em_formato_longo(tmp_path):
     assert o.loc[(1100015, 2023), "ideb"] == pytest.approx(5.6)
     assert pd.isna(o.loc[(1100023, 2021), "ideb"])
     assert pd.isna(o.loc[(1100015, 2021), "nota_lp"])  # coluna ausente para o ano vira NaN
+
+
+def test_microdados_alunos_tipos_e_rede(tmp_path):
+    path = tmp_path / "TS_ALUNO.csv"
+    header = "NU_ANO_AVALIACAO;CO_UF;SG_UF;ID_ALUNO;TP_SERIE;ID_ESCOLA;TP_DEPENDENCIA;CO_MUNICIPIO;NO_MUNICIPIO;IN_PRESENCA_LP;IN_PREENCHIMENTO_LP;CO_CADERNO_LP;VL_PESO_ALUNO_LP;VL_PROFICIENCIA_LP;IN_ALFABETIZADO"
+    linhas = [
+        "2024;11;RO;1;2;60000163;3;1100015;Alta Floresta D'Oeste;1;1;1;1.06;759.43;1",
+        "2024;11;RO;2;2;60000164;2;1100015;Alta Floresta D'Oeste;0;0;10;;;0",
+        "2025;11;RO;3;2;;;;São João;1;1;3;1.5;700.1;0",
+    ]
+    path.write_text("\n".join([header, *linhas]) + "\n", encoding="latin-1")
+    df = inep.read_microdados_alunos(path)
+
+    assert len(df) == 3
+    assert list(df["rede"].astype(object).fillna("?")) == ["municipal", "estadual", "?"]
+    assert df["proficiencia"].dtype == "float32"
+    assert pd.isna(df.loc[1, "proficiencia"])
+    assert pd.isna(df.loc[2, "id_municipio"])
+    assert df["alfabetizado"].tolist() == [1, 0, 0]
