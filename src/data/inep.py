@@ -128,3 +128,131 @@ def read_ica_ufs(path: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
         metas.append(t)
     metas = pd.concat(metas, ignore_index=True)
     return resultados, metas
+
+
+# ---------------------------------------------------------------------------
+# INSE e indicadores do Censo Escolar
+# ---------------------------------------------------------------------------
+
+
+def read_inse_municipios(path: Path) -> pd.DataFrame:
+    """INSE por municipio, no estrato total da rede publica (federal, estadual e
+    municipal) e localizacao total, mais a fatia rural dos alunos."""
+    df = pd.read_excel(path, sheet_name="INSE_MUN_2023", na_values=NA_VALUES)
+    publica = df[df["TP_TIPO_REDE"] == 6]
+    total = publica[publica["TP_LOCALIZACAO"] == 0].copy()
+    rural = publica[publica["TP_LOCALIZACAO"] == 2][["CO_MUNICIPIO", "QTD_ALUNOS_INSE"]]
+    rural = rural.rename(columns={"QTD_ALUNOS_INSE": "qtd_rural"})
+    out = total.merge(rural, on="CO_MUNICIPIO", how="left")
+    out["qtd_rural"] = out["qtd_rural"].fillna(0)
+    res = pd.DataFrame(
+        {
+            "id_municipio": out["CO_MUNICIPIO"].astype("int64"),
+            "capital": (out["TP_CAPITAL"] == 1).astype("int8"),
+            "inse_medio": _to_num(out["MEDIA_INSE"]),
+            "inse_qtd_alunos": _to_num(out["QTD_ALUNOS_INSE"]),
+            "pct_alunos_rural": 100 * out["qtd_rural"] / out["QTD_ALUNOS_INSE"],
+        }
+    )
+    baixo = out[["PC_NIVEL_1", "PC_NIVEL_2", "PC_NIVEL_3"]].apply(_to_num).fillna(0).sum(axis=1)
+    alto = out[["PC_NIVEL_6", "PC_NIVEL_7", "PC_NIVEL_8"]].apply(_to_num).fillna(0).sum(axis=1)
+    res["inse_pct_nivel_baixo"] = baixo.values
+    res["inse_pct_nivel_alto"] = alto.values
+    return res
+
+
+def _read_censo_sheet(path: Path) -> pd.DataFrame:
+    """Le uma planilha de indicador do Censo Escolar localizando a linha de cabecalho
+    (a que comeca com NU_ANO_CENSO) e filtrando o estrato total de localizacao."""
+    raw = pd.read_excel(path, header=None, nrows=15)
+    header_row = next(
+        i for i in range(len(raw)) if str(raw.iloc[i, 0]).strip() == "NU_ANO_CENSO"
+    )
+    df = pd.read_excel(path, header=header_row, na_values=NA_VALUES)
+    df = df[df["NO_CATEGORIA"] == "Total"].copy()
+    df["CO_MUNICIPIO"] = _to_num(df["CO_MUNICIPIO"]).astype("Int64")
+    df = df.dropna(subset=["CO_MUNICIPIO"])
+    return df
+
+
+# colunas de interesse por indicador: nome de saida -> coluna na planilha
+CENSO_COLUNAS = {
+    "afd": {
+        "afd_ai_grupo1_pct": "FUN_AI_CAT_1",
+        "afd_ai_grupo5_pct": "FUN_AI_CAT_5",
+        "afd_inf_grupo1_pct": "ED_INF_CAT_1",
+    },
+    "atu": {
+        "alunos_por_turma_ai": "FUN_AI_CAT_0",
+        "alunos_por_turma_2ano": "FUN_02_CAT_0",
+        "alunos_por_turma_pre": "PRE_CAT_0",
+    },
+    "tdi": {
+        "distorcao_ai_pct": "FUN_AI_CAT_0",
+        "distorcao_2ano_pct": "FUN_02_CAT_0",
+    },
+    "dsu": {
+        "docentes_superior_ai_pct": "FUN_AI_CAT_0",
+        "docentes_superior_inf_pct": "ED_INF_CAT_0",
+    },
+    "rend": {
+        "aprovacao_ai_pct": "1_CAT_FUN_AI",
+        "aprovacao_1ano_pct": "1_CAT_FUN_01",
+        "aprovacao_2ano_pct": "1_CAT_FUN_02",
+        "reprovacao_ai_pct": "2_CAT_FUN_AI",
+        "abandono_ai_pct": "3_CAT_FUN_AI",
+    },
+}
+
+
+def read_indicador_censo(path: Path, indicador: str, dependencia: str = "Pública") -> pd.DataFrame:
+    """Indicador do Censo Escolar por municipio para uma dependencia administrativa.
+
+    O padrao e a rede publica (estadual + municipal), que e o universo avaliado
+    pelo Indicador Crianca Alfabetizada.
+    """
+    colunas = CENSO_COLUNAS[indicador]
+    df = _read_censo_sheet(path)
+    df = df[df["NO_DEPENDENCIA"] == dependencia]
+    out = pd.DataFrame(
+        {
+            "ano": df["NU_ANO_CENSO"].astype("int64"),
+            "id_municipio": df["CO_MUNICIPIO"].astype("int64"),
+        }
+    )
+    for nome, col in colunas.items():
+        out[nome] = _to_num(df[col]).values
+    return out.reset_index(drop=True)
+
+
+# ---------------------------------------------------------------------------
+# IDEB anos iniciais
+# ---------------------------------------------------------------------------
+
+
+def read_ideb_anos_iniciais(path: Path, rede: str = "Pública") -> pd.DataFrame:
+    """IDEB dos anos iniciais em formato longo: id_municipio, ano, ideb, nota_lp,
+    nota_mt, aprovacao (indicador de rendimento)."""
+    raw = pd.read_excel(path, header=None, nrows=15)
+    header_row = next(i for i in range(len(raw)) if str(raw.iloc[i, 0]).strip() == "SG_UF")
+    df = pd.read_excel(path, header=header_row, na_values=NA_VALUES)
+    df = df[df["REDE"] == rede].copy()
+    df["CO_MUNICIPIO"] = _to_num(df["CO_MUNICIPIO"]).astype("Int64")
+    df = df.dropna(subset=["CO_MUNICIPIO"])
+
+    padrao_ano = re.compile(r"VL_OBSERVADO_(\d{4})")
+    anos = sorted({int(m.group(1)) for c in df.columns if (m := padrao_ano.fullmatch(str(c)))})
+    colunas = {
+        "ideb": "VL_OBSERVADO_{}",
+        "nota_lp": "VL_NOTA_PORTUGUES_{}",
+        "nota_mt": "VL_NOTA_MATEMATICA_{}",
+        "rendimento": "VL_INDICADOR_REND_{}",
+    }
+    partes = []
+    for ano in anos:
+        p = pd.DataFrame({"id_municipio": df["CO_MUNICIPIO"].astype("int64"), "ano": ano})
+        for nome, padrao in colunas.items():
+            col = padrao.format(ano)
+            p[nome] = _to_num(df[col]).values if col in df.columns else np.nan
+        partes.append(p)
+    return pd.concat(partes, ignore_index=True)

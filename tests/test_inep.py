@@ -61,3 +61,45 @@ def test_ica_ufs_trata_brasil_e_meta_com_texto(tmp_path):
 
     assert set(resultados["sigla_uf"]) == {"BR", "SC"}
     assert metas.set_index(["sigla_uf", "ano"]).loc[("BR", 2030), "meta_pct"] == 80
+
+
+def test_indicador_censo_localiza_cabecalho_e_filtra_estratos(tmp_path):
+    path = tmp_path / "tdi.xlsx"
+    rows = [
+        [None, "Ministério da Educação"],
+        ["Taxa de Distorção"],
+        ["Ano", "Região", "Sigla da UF", "Código do Município", "Nome", "Localização", "Dependência", "Total", "Anos Iniciais", "2º Ano"],
+        ["NU_ANO_CENSO", "NO_REGIAO", "SG_UF", "CO_MUNICIPIO", "NO_MUNICIPIO", "NO_CATEGORIA", "NO_DEPENDENCIA", "FUN_CAT_0", "FUN_AI_CAT_0", "FUN_02_CAT_0"],
+        [2024, "Norte", "RO", 1100015, "Alta Floresta", "Total", "Total", 10.9, 8.5, 2.8],
+        [2024, "Norte", "RO", 1100015, "Alta Floresta", "Total", "Pública", 11.2, 8.9, 3.1],
+        [2024, "Norte", "RO", 1100015, "Alta Floresta", "Rural", "Pública", 17.5, 12.9, 4.9],
+        [2024, "Norte", "RO", 1100023, "Ariquemes", "Total", "Pública", "--", 6.0, 1.9],
+    ]
+    _write_xlsx(path, rows, sheet="Plan1")
+    out = inep.read_indicador_censo(path, "tdi")
+
+    assert list(out.columns) == ["ano", "id_municipio", "distorcao_ai_pct", "distorcao_2ano_pct"]
+    assert len(out) == 2  # so o estrato total x publica, um por municipio
+    assert out.set_index("id_municipio").loc[1100015, "distorcao_ai_pct"] == pytest.approx(8.9)
+
+
+def test_ideb_em_formato_longo(tmp_path):
+    path = tmp_path / "ideb.xlsx"
+    rows = [
+        [None, "Ministério da Educação"],
+        ["Sigla da UF", "Código", "Nome", "Rede", "Ideb 2021", "Ideb 2023", "LP 2023", "MT 2023", "Rend 2023"],
+        ["SG_UF", "CO_MUNICIPIO", "NO_MUNICIPIO", "REDE", "VL_OBSERVADO_2021", "VL_OBSERVADO_2023",
+         "VL_NOTA_PORTUGUES_2023", "VL_NOTA_MATEMATICA_2023", "VL_INDICADOR_REND_2023"],
+        ["RO", 1100015, "Alta Floresta", "Pública", 5.1, 5.6, 200.1, 210.5, 0.95],
+        ["RO", 1100015, "Alta Floresta", "Municipal", 5.0, 5.5, 199.0, 209.0, 0.94],
+        ["RO", 1100023, "Ariquemes", "Pública", "-", 6.0, 205.0, 215.0, 0.97],
+    ]
+    _write_xlsx(path, rows, sheet="Plan1")
+    out = inep.read_ideb_anos_iniciais(path)
+
+    assert set(out["ano"]) == {2021, 2023}
+    assert len(out) == 4
+    o = out.set_index(["id_municipio", "ano"])
+    assert o.loc[(1100015, 2023), "ideb"] == pytest.approx(5.6)
+    assert pd.isna(o.loc[(1100023, 2021), "ideb"])
+    assert pd.isna(o.loc[(1100015, 2021), "nota_lp"])  # coluna ausente para o ano vira NaN
