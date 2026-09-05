@@ -29,9 +29,8 @@ data/external/*
 !data/external/.gitkeep
 
 # A Gold e as bases analiticas sao versionadas de proposito: deixam os notebooks
-# e os modelos reproduziveis sem baixar nada. Excecao: a base de aluno completa,
-# que passa do limite razoavel para o git (fica em data/processed e e regenerada).
-data/processed/abt_aluno.parquet
+# e os modelos reproduziveis sem baixar nada. Os arquivos maiores (fato_aluno e a
+# base de aluno) ficam em torno de 25 MB em Parquet comprimido, o que cabe no git.
 
 # Modelos: os pipelines finais sao versionados; artefatos intermediarios nao
 models/tmp/

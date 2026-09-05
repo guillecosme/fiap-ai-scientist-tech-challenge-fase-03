@@ -190,6 +190,7 @@ def read_microdados_municipio(path: Path) -> pd.DataFrame:
         {
             "ano": df["NU_ANO_AVALIACAO"].astype("int16"),
             "id_municipio": df["CO_MUNICIPIO"].astype("int64"),
+            "nome_municipio": df["NO_MUNICIPIO"].astype(str).str.strip(),
             "sigla_uf": df["SG_UF"].astype(str),
             "rede": df["ID_TIPO_REDE"].map(rede),
             "indicador_pct": _to_num(df["PC_ALUNO_ALFABETIZADO"]),
