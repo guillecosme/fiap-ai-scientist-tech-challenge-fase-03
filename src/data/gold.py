@@ -42,10 +42,16 @@ def _microdados_dir(ano: int) -> Path:
 def carregar_resultados_e_metas() -> tuple[pd.DataFrame, pd.DataFrame]:
     """Uniao das planilhas municipais de 2023, 2024 e 2025.
 
-    Para cada (municipio, ano) o resultado preferido e o da planilha publicada no
-    proprio ano, que traz nivel e participacao e nao sofre o arredondamento das
-    republicacoes. A meta e a mesma em todas as planilhas; fica a versao com mais
-    casas decimais (a mais antiga) e as demais so preenchem lacunas.
+    Resultados: para cada (municipio, ano) vale a planilha publicada no proprio
+    ano, que traz nivel e participacao. Nos anos com microdados o percentual e
+    substituido pelo valor exato de TS_MUNICIPIO (rede municipal), porque a
+    planilha de 2025 publica os percentuais arredondados para inteiros.
+
+    Metas: a trajetoria 2024-2030 de cada municipio vem da planilha mais recente
+    em que ela esta completa (alguns municipios tiveram a meta repactuada). Como
+    a planilha de 2025 arredonda para inteiros, cada valor e trocado pela versao
+    com mais casas decimais de uma planilha anterior sempre que ambas coincidem
+    depois do arredondamento.
     """
     resultados, metas = [], []
     for ano in ANOS_PLANILHA:
@@ -62,13 +68,60 @@ def carregar_resultados_e_metas() -> tuple[pd.DataFrame, pd.DataFrame]:
         .drop(columns="prioridade")
         .reset_index(drop=True)
     )
-    metas = (
-        metas.dropna(subset=["meta_pct"])
-        .sort_values(["id_municipio", "ano", "ano_planilha"])
-        .drop_duplicates(["id_municipio", "ano"], keep="first")
-        .reset_index(drop=True)
-    )
+    # percentual exato dos microdados nos anos em que existem
+    for ano in ANOS_MICRODADOS:
+        ts = inep.read_microdados_municipio(_microdados_dir(ano) / "TS_MUNICIPIO.csv")
+        exato = ts[ts["rede"] == "municipal"].set_index("id_municipio")["indicador_pct"]
+        mask = resultados["ano"] == ano
+        substituto = resultados.loc[mask, "id_municipio"].map(exato)
+        atual = resultados.loc[mask, "indicador_pct"]
+        resultados.loc[mask, "indicador_pct"] = substituto.fillna(atual)
+
+    metas = _consolidar_metas(metas, chave="id_municipio")
     return resultados, metas
+
+
+def _consolidar_metas(metas: pd.DataFrame, chave: str) -> pd.DataFrame:
+    """Uma trajetoria por unidade, da planilha mais recente completa, com a precisao
+    das planilhas anteriores quando os valores coincidem apos arredondamento."""
+    metas = metas.dropna(subset=["meta_pct"])
+    anos_meta = sorted(metas["ano"].unique())
+    completas = (
+        metas.groupby([chave, "ano_planilha"])["ano"].nunique().rename("n").reset_index()
+    )
+    completas = completas[completas["n"] == len(anos_meta)]
+    escolhida = completas.sort_values([chave, "ano_planilha"]).groupby(chave).tail(1)
+    escolhida = escolhida[[chave, "ano_planilha"]].rename(columns={"ano_planilha": "planilha_base"})
+
+    base = metas.merge(escolhida, on=chave)
+    base = base[base["ano_planilha"] == base["planilha_base"]]
+    base = base[[chave, "ano", "meta_pct", "planilha_base"]]
+    base = base.rename(columns={"meta_pct": "meta_base"})
+
+    # unidades sem nenhuma trajetoria completa: fica o que existe, da planilha mais recente
+    sem_base = metas[~metas[chave].isin(escolhida[chave])]
+    sem_base = (
+        sem_base.sort_values([chave, "ano", "ano_planilha"])
+        .drop_duplicates([chave, "ano"], keep="last")[[chave, "ano", "meta_pct", "ano_planilha"]]
+    )
+
+    # uma planilha anterior so substitui a trajetoria inteira, e so quando coincide
+    # com a base em todos os anos depois do arredondamento
+    anteriores = metas.merge(base, on=[chave, "ano"])
+    anteriores = anteriores[anteriores["ano_planilha"] < anteriores["planilha_base"]]
+    anteriores["coincide"] = anteriores["meta_pct"].round(0) == anteriores["meta_base"].round(0)
+    elegiveis = anteriores.groupby([chave, "ano_planilha"]).agg(
+        n=("ano", "nunique"), todas=("coincide", "all")
+    )
+    elegiveis = elegiveis[(elegiveis["n"] == len(anos_meta)) & elegiveis["todas"]].reset_index()
+    elegiveis = elegiveis.sort_values([chave, "ano_planilha"]).drop_duplicates(chave, keep="first")
+    precisas = anteriores.merge(elegiveis[[chave, "ano_planilha"]], on=[chave, "ano_planilha"])
+    precisas = precisas[[chave, "ano", "meta_pct", "ano_planilha"]]
+    base = base.merge(precisas, on=[chave, "ano"], how="left")
+    base["meta_pct"] = base["meta_pct"].fillna(base["meta_base"])
+    base["ano_planilha"] = base["ano_planilha"].fillna(base["planilha_base"]).astype(int)
+    out = pd.concat([base[[chave, "ano", "meta_pct", "ano_planilha"]], sem_base], ignore_index=True)
+    return out.sort_values([chave, "ano"]).reset_index(drop=True)
 
 
 def carregar_ufs() -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -87,12 +140,7 @@ def carregar_ufs() -> tuple[pd.DataFrame, pd.DataFrame]:
         .drop(columns="prioridade")
         .reset_index(drop=True)
     )
-    metas = (
-        metas.dropna(subset=["meta_pct"])
-        .sort_values(["sigla_uf", "ano", "ano_planilha"])
-        .drop_duplicates(["sigla_uf", "ano"], keep="first")
-        .reset_index(drop=True)
-    )
+    metas = _consolidar_metas(metas, chave="sigla_uf")
     return resultados, metas
 
 

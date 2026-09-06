@@ -106,9 +106,10 @@ SOURCES: tuple[Source, ...] = (
     _s("ibge_censo_2022", f"{SIDRA}/t/4714/n6/all/v/93,6318,614/p/2022",
        EXTERNAL_DIR / "ibge/censo_2022.json", "ibge", 2022,
        "Populacao residente, area e densidade demografica (Censo 2022)", "json"),
-    _s("ibge_pib", f"{SIDRA}/t/5938/n6/all/v/37,516,520,528,6574/p/2022",
-       EXTERNAL_DIR / "ibge/pib_municipal.json", "ibge", 2022,
-       "PIB a precos correntes e participacao dos setores no valor adicionado (2022)", "json"),
+    _s("ibge_pib", f"{SIDRA}/t/5938/n6/all/v/37,516,520,528,6574/p/2021",
+       EXTERNAL_DIR / "ibge/pib_municipal.json", "ibge", 2021,
+       "PIB e participacao dos setores no valor adicionado (2021, ultima edicao com o "
+       "detalhamento setorial divulgado)", "json"),
 )
 
 

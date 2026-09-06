@@ -147,10 +147,10 @@
     "downloaded_at": "2026-09-14T13:25:21+00:00"
   },
   "ibge_pib": {
-    "url": "https://apisidra.ibge.gov.br/values/t/5938/n6/all/v/37,516,520,528,6574/p/2022",
+    "url": "https://apisidra.ibge.gov.br/values/t/5938/n6/all/v/37,516,520,528,6574/p/2021",
     "path": "data/external/ibge/pib_municipal.json",
-    "sha256": "760a035a85ea32ff8b39c24a39156aafd1130cc310743076b213fb7f381f59b0",
-    "bytes": 10352960,
-    "downloaded_at": "2026-09-14T13:29:36+00:00"
+    "sha256": "9de1b2aa4a10241fedc4980e46fbd1a939a0e8625f01e2a0ccb9ab2a0c266346",
+    "bytes": 10436427,
+    "downloaded_at": "2026-09-14T13:52:50+00:00"
   }
 }
