@@ -28,7 +28,7 @@ A regra do indicador: aluno alfabetizado é quem atinge 743 pontos na escala Sae
 | `rend_2023/2024` | Taxas de aprovação, reprovação e abandono por ano escolar | idem | 2023, 2024 | fluxo escolar do ano anterior |
 | `ideb_anos_iniciais` | IDEB, nota Saeb e fluxo dos anos iniciais | município x rede | 2005 a 2025 (bienal) | série histórica: nível e tendência |
 | `ibge_censo_2022` | População residente, área e densidade | município | 2022 | porte e territorialidade |
-| `ibge_pib` | PIB a preços correntes e participação dos setores no valor adicionado | município | 2021, 2022 | renda e estrutura produtiva |
+| `ibge_pib` | PIB a preços correntes e participação dos setores no valor adicionado | município | 2021 (última edição com o detalhamento setorial divulgado) | renda e estrutura produtiva |
 
 ## Alinhamento temporal
 

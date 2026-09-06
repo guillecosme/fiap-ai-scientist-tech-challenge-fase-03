@@ -82,7 +82,9 @@ def read_ica_municipios(path: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
             continue
         t = base[["id_municipio"]].copy()
         t["ano"] = int(m.group(1))
-        t["meta_pct"] = _to_num(df[col])
+        # a planilha de 2025 traz meta 2030 igual a zero em dois municipios: erro de
+        # preenchimento, tratado como ausente
+        t["meta_pct"] = _to_num(df[col]).where(lambda v: v > 0)
         t["ano_planilha"] = ano_planilha
         metas.append(t)
     metas = pd.concat(metas, ignore_index=True)

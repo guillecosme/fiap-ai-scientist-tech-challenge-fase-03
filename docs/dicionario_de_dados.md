@@ -58,7 +58,7 @@ Série oficial da rede municipal, 2023 a 2025, como publicada pelo Inep, compara
 |---|---|---|
 | ano, id_municipio, nome_municipio, sigla_uf, id_uf, nome_uf, nome_regiao | | chaves e atributos |
 | qtd_avaliados, qtd_alfabetizados, media_proficiencia | | volumes dos microdados (2024 e 2025; nulos em 2023) |
-| indicador_pct | float | Percentual de alunos alfabetizados publicado pelo Inep |
+| indicador_pct | float | Percentual de alunos alfabetizados. Em 2023 vem da planilha de divulgação; em 2024 e 2025 vem do agregado exato dos microdados (TS_MUNICIPIO), porque a planilha de 2025 arredonda para inteiros |
 | nivel | int | Nível de alfabetização do município (0 a 5), como divulgado |
 | participacao_pct | float | Percentual de participação dos alunos na prova |
 | meta_municipio | float | Meta do ano (não há meta para 2023, ano de linha de base) |
@@ -66,7 +66,7 @@ Série oficial da rede municipal, 2023 a 2025, como publicada pelo Inep, compara
 | gap_meta_pp | float | Distância para a meta em pontos percentuais |
 
 ### metas_municipio
-Metas anuais por município, 2024 a 2030, em formato longo (`id_municipio`, `ano`, `meta_pct`). Quando a mesma meta aparece em mais de uma planilha, vale a versão com mais casas decimais.
+Metas anuais por município, 2024 a 2030, em formato longo (`id_municipio`, `ano`, `meta_pct`). A trajetória de cada município vem inteira da planilha mais recente em que está completa (alguns municípios tiveram a meta repactuada), com a precisão das planilhas anteriores quando os valores coincidem depois do arredondamento. Meta igual a zero na fonte é tratada como ausente.
 
 ### evolucao_temporal
 Série por município com `indicador_ano_anterior` e `variacao_pp`.

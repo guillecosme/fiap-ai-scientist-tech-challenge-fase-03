@@ -22,7 +22,7 @@ def ica_municipios_2024(tmp_path):
          "PC_ALUNO_ALFABETIZADO_2023", "PC_ALUNO_ALFABETIZADO_2024", "META_FINAL_2024",
          "META_FINAL_2025", "CO_NIVEL_ALFABETIZACAO", "PC_AVALIADOS_LP"],
         [2024, 11, "RO", 1100015, "Alta Floresta D'Oeste", "MUNICIPAL", 64.6, 67.79, 67.08, 69.51, 3, 89.87],
-        [2024, 11, "RO", 1100023, "Ariquemes", "MUNICIPAL", "-", 65.62, "-", 68.02, 3, 88.76],
+        [2024, 11, "RO", 1100023, "Ariquemes", "MUNICIPAL", "-", 65.62, "-", 0, 3, 88.76],
         [None, None, None, None, "(1) nota de rodape", None, None, None, None, None, None, None],
     ]
     _write_xlsx(path, rows)
@@ -44,6 +44,7 @@ def test_ica_municipios_vira_formato_longo(ica_municipios_2024):
     m = metas.set_index(["id_municipio", "ano"])["meta_pct"]
     assert m.loc[(1100015, 2025)] == pytest.approx(69.51)
     assert pd.isna(m.loc[(1100023, 2024)])
+    assert pd.isna(m.loc[(1100023, 2025)])  # meta zero e erro de preenchimento
     assert (resultados["ano_planilha"] == 2024).all()
 
 
