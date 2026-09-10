@@ -38,8 +38,10 @@ def amostra_estratificada(df: pd.DataFrame, n: int, alvo: str, seed: int = SEED)
     if n >= len(df):
         return df
     frac = n / len(df)
-    return (
+    amostra = (
         df.groupby(alvo, group_keys=False)
         .apply(lambda g: g.sample(frac=frac, random_state=seed), include_groups=False)
         .pipe(lambda idx: df.loc[idx.index])
     )
+    # embaralha: o groupby deixa as classes em blocos, o que atrapalha a curva de aprendizado
+    return amostra.sample(frac=1, random_state=seed)
