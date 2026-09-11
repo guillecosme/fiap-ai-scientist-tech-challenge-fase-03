@@ -1,0 +1,162 @@
+{
+  "alvo": "alfabetizado (proficiência >= 743)",
+  "universo": "alunos presentes com prova preenchida; ausentes fora",
+  "treino": "2024 completo com pesos amostrais",
+  "validacao": "StratifiedGroupKFold por município, 3 folds; busca em amostra estratificada de 300 mil",
+  "teste": "2025, aberto uma vez",
+  "modelo": "lightgbm",
+  "hiperparametros": {
+    "colsample_bytree": 0.9041986740582306,
+    "max_depth": 11,
+    "min_child_samples": 72,
+    "num_leaves": 16,
+    "reg_lambda": 1.1290133559092674,
+    "subsample": 0.7760609974958406,
+    "subsample_freq": 1
+  },
+  "limiar_operacao": 0.63,
+  "criterio_limiar": "recall de não alfabetizados >= 70% na validação de 2024",
+  "comparacao_familias": {
+    "logistica": {
+      "auc_validacao": 0.6643231374082781,
+      "auc_treino": 0.668187709499417
+    },
+    "random_forest": {
+      "auc_validacao": 0.6645981176433743,
+      "auc_treino": 0.6917688160786831
+    },
+    "lightgbm": {
+      "auc_validacao": 0.6665816213307397,
+      "auc_treino": 0.6920448736217418
+    }
+  },
+  "ablacao": [
+    {
+      "variáveis": "só aluno e escola (rede, UF, tamanho, presença)",
+      "n_variáveis": 4,
+      "auc_validacao": 0.6421,
+      "auc_treino": 0.6639
+    },
+    {
+      "variáveis": "contexto municipal sem histórico",
+      "n_variáveis": 39,
+      "auc_validacao": 0.6586,
+      "auc_treino": 0.6892
+    },
+    {
+      "variáveis": "só histórico do indicador e UF",
+      "n_variáveis": 4,
+      "auc_validacao": 0.6491,
+      "auc_treino": 0.6684
+    },
+    {
+      "variáveis": "completo",
+      "n_variáveis": 42,
+      "auc_validacao": 0.6644,
+      "auc_treino": 0.6907
+    }
+  ],
+  "metricas": {
+    "validação 2024 (fora da amostra, limiar 0,5)": {
+      "auc_roc": 0.6630551236398491,
+      "auc_pr": 0.7375890327352825,
+      "acuracia": 0.6352628482293988,
+      "precisao": 0.6569375330269771,
+      "recall": 0.8034717129495766,
+      "f1": 0.7228531679270518,
+      "precisao_negativos": 0.578393002775909,
+      "recall_negativos": 0.39119800613873,
+      "limiar": 0.5,
+      "taxa_base": 0.5919971078889273
+    },
+    "validação 2024 (fora da amostra, limiar de operação)": {
+      "auc_roc": 0.6630551236398491,
+      "auc_pr": 0.7375890327352825,
+      "acuracia": 0.5939892953378295,
+      "precisao": 0.7236263958412665,
+      "recall": 0.5083033254063425,
+      "f1": 0.5971472187316318,
+      "precisao_negativos": 0.5017051780049909,
+      "recall_negativos": 0.7183164689116105,
+      "limiar": 0.63,
+      "taxa_base": 0.5919971078889273
+    },
+    "teste 2025 (limiar 0,5)": {
+      "auc_roc": 0.6462839041274553,
+      "auc_pr": 0.7756165990678314,
+      "acuracia": 0.6514936344636181,
+      "precisao": 0.7041181111199561,
+      "recall": 0.8091568957088734,
+      "f1": 0.7529920502687113,
+      "precisao_negativos": 0.4898293894172677,
+      "recall_negativos": 0.35018104960590424,
+      "limiar": 0.5,
+      "taxa_base": 0.6564889795750075
+    },
+    "teste 2025 (limiar de operação)": {
+      "auc_roc": 0.6462839041274553,
+      "auc_pr": 0.7756165990678314,
+      "acuracia": 0.5770714761279723,
+      "precisao": 0.7613165002057599,
+      "recall": 0.5182511657217355,
+      "f1": 0.6166976147038459,
+      "precisao_negativos": 0.4282079725807838,
+      "recall_negativos": 0.6894838392280009,
+      "limiar": 0.63,
+      "taxa_base": 0.6564889795750075
+    }
+  },
+  "features": {
+    "historico": [
+      "indicador_t1",
+      "participacao_t1",
+      "salto_necessario"
+    ],
+    "log": [
+      "escola_qtd_avaliados",
+      "populacao",
+      "area_km2",
+      "densidade_hab_km2",
+      "pib_per_capita",
+      "inse_qtd_alunos"
+    ],
+    "numericas": [
+      "escola_taxa_presenca",
+      "afd_ai_grupo1_pct",
+      "afd_ai_grupo5_pct",
+      "afd_inf_grupo1_pct",
+      "alunos_por_turma_ai",
+      "alunos_por_turma_2ano",
+      "alunos_por_turma_pre",
+      "distorcao_ai_pct",
+      "distorcao_2ano_pct",
+      "docentes_superior_ai_pct",
+      "docentes_superior_inf_pct",
+      "aprovacao_ai_pct",
+      "aprovacao_1ano_pct",
+      "aprovacao_2ano_pct",
+      "reprovacao_ai_pct",
+      "abandono_ai_pct",
+      "ideb_ultimo",
+      "ideb_nota_lp_ultimo",
+      "ideb_rendimento_ultimo",
+      "ideb_anterior",
+      "ideb_variacao",
+      "ideb_tendencia",
+      "inse_medio",
+      "pct_alunos_rural",
+      "inse_pct_nivel_baixo",
+      "inse_pct_nivel_alto",
+      "capital",
+      "pct_vab_agro",
+      "pct_vab_industria",
+      "pct_vab_adm_publica",
+      "pct_vab_servicos"
+    ],
+    "categoricas": [
+      "rede",
+      "sigla_uf"
+    ]
+  },
+  "salvo_em": "2026-09-14T18:17:24+00:00"
+}
