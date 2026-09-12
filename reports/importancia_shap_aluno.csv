@@ -1,0 +1,73 @@
+variavel,importancia_shap
+% alfabetizados no ano anterior,0.1956
+Salto necessário para a meta (p.p.),0.1413
+Presença na prova na escola (%),0.1157
+IDEB anos iniciais (última edição),0.1021
+Nota de português no Saeb 5o ano (última edição),0.0683
+UF: RS,0.053
+UF: MG,0.0485
+UF: BA,0.0378
+UF: SP,0.034
+Rede de ensino: estadual,0.0246
+Rede de ensino: municipal,0.0244
+Participação na prova no ano anterior (%),0.024
+UF: CE,0.022
+Alunos avaliados na escola,0.0213
+"Distorção idade-série, anos iniciais (%)",0.021
+IDEB anos iniciais (edição anterior),0.0134
+UF: GO,0.0118
+Indicador de rendimento do IDEB (última edição),0.0102
+Alunos por turma no 2o ano,0.0099
+Tendência do IDEB (pontos por edição),0.0097
+"Docentes com curso superior, educação infantil (%)",0.0092
+Peso dos serviços na economia (%),0.0087
+"Docentes com formação adequada, educação infantil (%)",0.0084
+Peso da agropecuária na economia (%),0.0081
+UF: MA,0.0079
+Variação do IDEB entre edições,0.0078
+Densidade demográfica (hab/km2),0.0075
+Distorção idade-série no 2o ano (%),0.0075
+Alunos nos níveis socioeconômicos baixos (%),0.0074
+Alunos em escolas rurais (%),0.0068
+Peso da indústria na economia (%),0.0065
+UF: ES,0.0063
+Taxa de aprovação no 2o ano (%),0.0062
+Alunos por turma na pré-escola,0.0061
+PIB per capita (R$),0.0061
+Peso da administração pública na economia (%),0.006
+UF: AL,0.0053
+Alunos nos níveis socioeconômicos altos (%),0.0052
+"Docentes com formação adequada, anos iniciais (%)",0.0049
+Alunos com INSE calculado,0.0048
+"Taxa de abandono, anos iniciais (%)",0.0047
+Área (km²),0.004
+População (Censo 2022),0.0038
+"Alunos por turma, anos iniciais",0.0035
+Nível socioeconômico médio dos alunos (INSE),0.0035
+"Docentes com curso superior, anos iniciais (%)",0.0031
+UF: SE,0.0023
+UF: PE,0.0022
+"Taxa de reprovação, anos iniciais (%)",0.0021
+UF: RJ,0.0021
+"Taxa de aprovação, anos iniciais (%)",0.0018
+UF: PA,0.0017
+Taxa de aprovação no 1o ano (%),0.0015
+"Docentes sem licenciatura, anos iniciais (%)",0.0014
+UF: AM,0.0013
+UF: RN,0.0011
+UF: PB,0.0011
+UF: PR,0.0009
+UF: MT,0.0006
+UF: AC,0.0004
+Sem informação: % alfabetizados no ano anterior,0.0004
+UF: SC,0.0003
+UF: TO,0.0003
+UF: RO,0.0003
+UF: AP,0.0002
+UF: PI,0.0002
+UF: MS,0.0001
+Capital de UF,0.0001
+Sem informação: Participação na prova no ano anterior (%),0.0
+UF: DF,0.0
+Sem informação: Salto necessário para a meta (p.p.),0.0
+Rede de ensino: privada,0.0

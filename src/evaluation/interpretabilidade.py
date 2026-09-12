@@ -80,8 +80,8 @@ def importancia_por_grupo(importancias: pd.DataFrame, grupos: dict[str, list[str
     def bloco(v):
         if v.startswith("UF:") or v.startswith("Rede de ensino:"):
             return "territorio (UF) e rede"
-        if v.startswith("Sem informação"):
-            return "historico do indicador"
+        if v.startswith("Sem informação: "):
+            return mapa.get(v[len("Sem informação: ") :], "outros")
         return mapa.get(v, "outros")
 
     tab = importancias.assign(bloco=importancias["variavel"].map(bloco))
