@@ -27,6 +27,10 @@ data/raw/*
 data/external/*
 !data/raw/.gitkeep
 !data/external/.gitkeep
+# a malha municipal (3,6 MB) fica versionada para os mapas rodarem sem download
+!data/external/ibge/
+data/external/ibge/*
+!data/external/ibge/malha_municipios.json
 
 # A Gold e as bases analiticas sao versionadas de proposito: deixam os notebooks
 # e os modelos reproduziveis sem baixar nada. Os arquivos maiores (fato_aluno e a
