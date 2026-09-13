@@ -32,4 +32,14 @@ Registro das decisões tomadas ao longo do projeto, com o motivo e a evidência.
 
 ## Modelagem
 
-Preenchido nos notebooks 03 a 06.
+| # | Decisão | Motivo | Onde |
+|---|---|---|---|
+| D19 | Busca de hiperparâmetros do modelo do aluno em amostra estratificada de 300 mil, ajuste final na base inteira | 1,85 milhão de linhas tornam a busca cara demais para o ganho; a curva de aprendizado mostra que o modelo satura muito antes desse volume | notebook 03 |
+| D20 | LightGBM como modelo do aluno | melhor AUC de validação (0,667), à frente da logística (0,664) e da Random Forest (0,665); gap treino-validação pequeno em todas | notebook 03 |
+| D21 | Limiar de operação por recall mínimo de 70% da classe "não alfabetizado", escolhido nas probabilidades fora da amostra de 2024 | a classe de interesse para política é a de risco; 0,5 daria recall de 39% | notebook 03 |
+| D22 | Modelo de município formulado como regressão do nível do indicador, com o risco derivado da distribuição dos resíduos | a regra da meta mudou entre 2024 e 2025; o classificador direto cai de 0,81 para 0,60 de AUC no teste temporal, a regressão do nível mantém 0,77 | notebook 04 |
+| D23 | Ajuste final do modelo de município nas linhas com alvo em 2025 (não em 2024 + 2025) | os rankings dos dois ajustes têm correlação 0,88, mas 2024 carrega choques localizados (queda de 20 p.p. do Rio Grande do Sul) que penalizavam municípios gaúchos além do que 2025 justifica | notebook 04 |
+| D24 | Backtest temporal 2024 para 2025 como a métrica de generalização reportada | é a única estimativa honesta do desempenho em um ano novo; a validação cruzada dentro do ano superestima | notebooks 03 e 04 |
+| D25 | K = 4 nos perfis, K-Means com contraste hierárquico | silhueta e Davies-Bouldin empatam entre 3 e 5; 4 dá perfis interpretáveis e grandes; três dos quatro são estáveis no hierárquico de Ward | notebook 05 |
+| D26 | SHAP no espaço transformado com rótulos de negócio, mais permutação como segunda opinião | o feedback da Fase 1 pediu nomes de negócio nos gráficos; a permutação confirma que o histórico é a variável de que o modelo mais depende | notebook 06 |
+| D27 | Sem ARIMA, sem inferência causal, sem reforço | três pontos de série, projeto preditivo; registrados como evoluções futuras | `docs/metodologia.md` |
