@@ -67,7 +67,32 @@
   },
   "projecao_2026": {
     "municipios": 5477,
-    "em_risco_50": 914
+    "em_risco_50": 936,
+    "efeito_ano_pp": 7.322702980937885,
+    "em_risco_50_sem_efeito_ano": 914
+  },
+  "selecao_de_features": {
+    "todas": {
+      "variáveis": 66.0,
+      "MAE validação 2024": 8.478363713562931,
+      "AUC risco validação 2024": 0.7977444125961927,
+      "MAE teste 2025": 11.376511295127749,
+      "AUC risco teste 2025": 0.7716666417341093
+    },
+    "Lasso (alpha 0.03)": {
+      "variáveis": 47.0,
+      "MAE validação 2024": 8.442108958199416,
+      "AUC risco validação 2024": 0.7990895283275739,
+      "MAE teste 2025": 11.251367798960585,
+      "AUC risco teste 2025": 0.7721349582712098
+    },
+    "RFE": {
+      "variáveis": 15.0,
+      "MAE validação 2024": 9.86968016304521,
+      "AUC risco validação 2024": 0.7338265538027194,
+      "MAE teste 2025": 11.396090934528072,
+      "AUC risco teste 2025": 0.7623679613312656
+    }
   },
   "features": {
     "historico": [
@@ -118,5 +143,5 @@
       "sigla_uf"
     ]
   },
-  "salvo_em": "2026-09-14T16:53:23+00:00"
+  "salvo_em": "2026-09-14T19:08:50+00:00"
 }

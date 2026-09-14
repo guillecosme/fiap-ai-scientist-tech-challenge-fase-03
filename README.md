@@ -54,7 +54,7 @@ Construir uma pipeline completa de Machine Learning, do dado bruto ao modelo int
 | Quais municípios apresentam maior risco educacional | risco de não atingir a meta, derivado da regressão do nível do indicador; ranking e mapa | notebook 04, `reports/municipios_risco_2026.csv` |
 | Quais regiões possuem padrões semelhantes | quatro perfis de município (K-Means, hierárquico, PCA), cruzados com o risco | notebook 05, `reports/perfis_municipios.csv` |
 | Como prever municípios que podem não atingir metas futuras | backtest 2024 para 2025 e projeção para 2026 | notebook 04, `reports/risco_2026_por_uf.csv` |
-| Quais fatores e variáveis mais influenciam | SHAP global, por bloco e local; importância por permutação | notebook 06, `reports/importancia_*.csv` |
+| Quais fatores e variáveis mais influenciam | SHAP global, por bloco e local; importância por permutação; seleção de features (Lasso e RFE) | notebooks 04 e 06, `reports/importancia_*.csv` |
 
 ## 3. Descrição da base utilizada
 
@@ -199,6 +199,7 @@ Outros achados da EDA: correlações altas entre nível e indicador do ano anter
 - Variáveis (42): rede, UF, alunos avaliados e presença na prova na escola, histórico do indicador do município, Censo Escolar, rendimento, IDEB, socioeconômico, porte e renda.
 - Validação: `StratifiedGroupKFold` por município (3 folds na busca, 3 folds na base inteira para as probabilidades fora da amostra).
 - Ponto de operação: limiar de 0,63 sobre a probabilidade de ser alfabetizado, escolhido para recall mínimo de 70% da classe "não alfabetizado" nas probabilidades fora da amostra de 2024.
+- Duas variantes: a **completa**, que inclui presença na prova e alunos avaliados na escola (medidas no dia da prova; servem para ler o resultado depois da aplicação), e a **antes da prova**, sem essas duas variáveis, para triagem antes do ano letivo. Não é vazamento do alvo; é uma questão de quando a variável existe.
 
 ### 6.2 Modelo de risco municipal
 
@@ -206,6 +207,8 @@ Outros achados da EDA: correlações altas entre nível e indicador do ano anter
 - Risco derivado: `P(nível real < meta) = P(resíduo < meta - nível previsto)`, com a distribuição empírica dos resíduos da validação por grupos.
 - Treino e validação em 2024 (5.425 municípios), teste em 2025 (5.439). Projeção 2026 (5.477 municípios com meta) com o modelo reajustado nas linhas de 2025.
 - Ponto de operação: limiar de 0,53 sobre a probabilidade de atingir, para recall mínimo de 70% da classe "não atingiu".
+- Seleção de features: Lasso (embedded) e RFE com LightGBM (wrapper) sobre o espaço transformado, com cada subconjunto reavaliado na validação por grupos e no backtest.
+- Incerteza entre anos: na projeção de 2026, o risco usa os resíduos da validação de 2025 somados a um efeito ano uniforme de +/- 7,3 p.p. (o viés medido no backtest), porque os resíduos de um único ano não contêm o deslocamento que um ano inteiro pode ter.
 
 ### 6.3 Perfis territoriais
 
@@ -234,7 +237,7 @@ Todas as métricas são reportadas para treino e validação (para ler overfitti
 | teste 2025, limiar 0,5 | 0,646 | 0,776 | 0,651 | 0,704 | 0,809 | 0,753 | 0,490 | 0,350 | 0,50 |
 | teste 2025, limiar de operação | 0,646 | 0,776 | 0,577 | 0,761 | 0,518 | 0,617 | 0,428 | 0,689 | 0,63 |
 
-Ablação por bloco de variáveis (AUC de validação): só rede, UF, tamanho e presença da escola 0,642; contexto municipal sem histórico 0,659; só histórico e UF 0,649; completo 0,664. A curva de aprendizado (10 mil a 200 mil alunos) mostra o AUC de validação subindo de 0,650 para 0,667 e o de treino caindo de 0,819 para 0,692; as curvas convergem antes do fim, o que indica que o limite é das variáveis disponíveis, não da quantidade de dados.
+Ablação por bloco de variáveis (AUC de validação): só rede, UF, tamanho e presença da escola 0,642; contexto municipal sem histórico 0,659; só histórico e UF 0,649; completo 0,664. Variante antes da prova (sem presença e alunos avaliados na escola), no teste de 2025: AUC 0,641 e AUC-PR 0,772, contra 0,646 e 0,776 da completa; recall de não alfabetizados no mesmo limiar 0,668 contra 0,689 (`reports/modelo_aluno_variantes.csv`). A curva de aprendizado (10 mil a 200 mil alunos) mostra o AUC de validação subindo de 0,650 para 0,667 e o de treino caindo de 0,819 para 0,692; as curvas convergem antes do fim, o que indica que o limite é das variáveis disponíveis, não da quantidade de dados.
 
 ### 8.2 Modelo de município
 
@@ -250,7 +253,11 @@ Ablação por bloco de variáveis (AUC de validação): só rede, UF, tamanho e 
 | Recall de "não atingiu" no ponto de operação | 0,70 | 0,81 |
 | Precisão de "não atingiu" no ponto de operação | 0,71 | 0,44 |
 
-O viés de -7,3 p.p. em 2025 corresponde ao aumento nacional do indicador naquele ano, concentrado em alguns estados (Bahia, Acre, Alagoas e Tocantins subiram mais de 15 pontos). O modelo treinado em 2024 subestima o nível de 2025, mas preserva a ordem dos municípios (Spearman 0,69). No ponto de operação, o modelo de 2024 aplicado a 2025 classifica mais municípios como em risco do que o necessário (recall dos negativos sobe para 0,81 e a precisão cai para 0,44), o erro menos custoso para uma lista de triagem.
+Seleção de features (LightGBM reavaliado em cada subconjunto): todas as 66 colunas, MAE de validação 8,48 e AUC do risco 0,798 na validação e 0,772 no teste; Lasso com alpha 0,03 (47 colunas), 8,44, 0,799 e 0,772; RFE com 15 colunas, 9,87, 0,734 e 0,762. O modelo tolera remover cerca de vinte colunas redundantes sem perda; o corte para 15 custa 1,4 p.p. de MAE. O modelo entregue é o completo.
+
+Projeção 2026: 936 municípios com risco acima de 50% (914 sem o efeito ano); o efeito ano reduz de 127 para 107 os municípios com risco acima de 90%.
+
+O R² do nível em 2025 (0,11) mede o quanto o modelo explica da variação de um ano que incluiu um deslocamento nacional; as métricas de ordenação, que são as relevantes para a lista de risco, são o Spearman e o AUC do risco. O viés de -7,3 p.p. em 2025 corresponde ao aumento nacional do indicador naquele ano, concentrado em alguns estados (Bahia, Acre, Alagoas e Tocantins subiram mais de 15 pontos). O modelo treinado em 2024 subestima o nível de 2025, mas preserva a ordem dos municípios (Spearman 0,69). No ponto de operação, o modelo de 2024 aplicado a 2025 classifica mais municípios como em risco do que o necessário (recall dos negativos sobe para 0,81 e a precisão cai para 0,44), o erro menos custoso para uma lista de triagem.
 
 ### 8.3 Perfis
 
@@ -294,16 +301,17 @@ O notebook 06 traz gráficos em cascata para um município no topo da lista de r
 4. **85% da variação entre alunos está dentro da escola.** Sem variáveis individuais, qualquer modelo tem esse teto; o uso do modelo do aluno é ordenar escolas e redes.
 5. **Alvo binário dependente de regra administrativa não generaliza entre anos.** O classificador direto aprendeu a regra de 2024 e falhou em 2025; a regressão do nível com a meta aplicada depois é a formulação que se mantém.
 6. **2025 foi um ano de salto** (6,8 pontos no indicador nacional; 9 na média municipal), com regressão à média em relação a 2024 (correlação de -0,41 entre a variação de 2024 e a de 2025). Modelos treinados em um ano subestimam o seguinte; o reajuste anual faz parte do método.
-7. **O Rio Grande do Sul lidera o risco de 2026 por causa das metas, não das redes.** As metas foram ancoradas no nível de 2023 (73% em média); o estado caiu para 52% em 2024 (enchentes) e voltou a 64% em 2025; a meta de 2026 (74%) exige superar o nível anterior ao choque. 69% dos municípios gaúchos ficam com risco acima de 50%.
+7. **O Rio Grande do Sul lidera o risco de 2026 por causa das metas, não das redes.** As metas foram ancoradas no nível de 2023 (73% em média); o estado caiu para 52% em 2024 (enchentes) e voltou a 64% em 2025; a meta de 2026 (74%) exige superar o nível anterior ao choque. 70% dos municípios gaúchos ficam com risco acima de 50%.
 8. **Os perfis cortam as regiões.** O perfil de fluxo comprometido (838 municípios, 54% de alfabetizados) tem municípios em todas as regiões; o perfil de pequenos de baixa renda com resultado alto (1.386 municípios, 76%) é 82% nordestino, com INSE igual ao do perfil de fluxo comprometido.
 9. **Presença na prova é um sinal forte no nível da escola.** De escolas com presença abaixo de 80% para escolas com presença quase total, a proporção de alfabetizados sobe de 52% para 72%.
 
 ## 11. Limitações do projeto
 
 - **Sem variáveis do aluno.** Os microdados não trazem sexo, idade, nível socioeconômico individual nem trajetória escolar. O modelo do aluno é um modelo de contexto, e o AUC de 0,65 reflete esse teto.
+- **Variáveis medidas no dia da prova.** Presença e alunos avaliados na escola só existem na aplicação; o modelo completo lê o resultado depois da prova e a variante sem elas é a que serve à triagem antecipada (AUC 0,641 contra 0,646).
 - **Comparabilidade entre UFs.** Cada estado aplica a própria avaliação, pareada à escala Saeb. Parte do efeito da UF pode ser do instrumento, e o modelo não separa isso da gestão.
 - **Série curta.** Três anos do indicador impedem modelos de série temporal e deixam as variáveis de defasagem dupla fora do modelo principal (só existem a partir de 2025).
-- **Choques não previstos.** O aumento nacional de 2025 e a queda do Rio Grande do Sul em 2024 não eram previsíveis a partir do contexto. O modelo projeta a trajetória dado o contexto; não antecipa programas novos nem eventos externos.
+- **Choques não previstos.** O aumento nacional de 2025 e a queda do Rio Grande do Sul em 2024 não eram previsíveis a partir do contexto. O modelo projeta a trajetória dado o contexto; não antecipa programas novos nem eventos externos. O efeito ano de +/- 7 p.p. na projeção representa essa incerteza, mas é uma estimativa a partir de uma única transição observada.
 - **Fontes com defasagem.** PIB de 2021 (última edição com composição setorial), INSE de 2023; na projeção de 2026 valem as últimas edições publicadas.
 - **Associação, não causa.** Distorção idade-série e abandono são sintomas da rede; reduzi-los por decisão administrativa não implica alfabetizar. Estimar efeitos de intervenção exige desenho causal.
 - **Escola mascarada.** O código de escola nos microdados é fictício e não liga ao Censo Escolar por escola; o contexto usado é municipal.
@@ -363,7 +371,7 @@ Do dado bruto: `make data` (cerca de 900 MB), `make gold`, `make abt`, depois `m
 
 ## 16. Organização do trabalho e documentação técnica
 
-O trabalho foi organizado em branches por etapa, com pull requests para a `main` e a justificativa de cada mudança na descrição do PR (catálogo de fontes, parsers, Gold, ABTs, um PR por notebook, módulos, documentação, apresentação). O histórico de commits segue a mesma ordem.
+O trabalho foi organizado em branches por etapa, com pull requests para a `main` e a justificativa de cada mudança na descrição do PR (catálogo de fontes, parsers, Gold, ABTs, um PR por notebook, módulos, documentação, apresentação, revisão de texto, refinamentos de modelagem). O histórico de commits segue a mesma ordem.
 
 - [docs/metodologia.md](docs/metodologia.md): fluxo, pipeline, protocolos de validação, o que ficou fora do escopo e por quê
 - [docs/decisoes_analiticas.md](docs/decisoes_analiticas.md): 27 decisões com motivo, evidência e onde foram aplicadas

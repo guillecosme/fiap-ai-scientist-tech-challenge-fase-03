@@ -1,0 +1,3 @@
+,auc_roc,auc_pr,recall_negativos,precisao_negativos,acuracia
+completo (com presença e tamanho da escola),0.6463,0.7756,0.6895,0.4282,0.5771
+antes da prova (sem as variáveis de escola),0.6414,0.7719,0.6682,0.4259,0.5766
