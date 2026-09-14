@@ -38,7 +38,7 @@ cp notebooks/03_modelo_aluno.ipynb /tmp/03_rapido.ipynb
 TC_RAPIDO=1 uv run jupyter nbconvert --to notebook --execute /tmp/03_rapido.ipynb
 ```
 
-No modo rápido o treino usa 200 mil alunos, a busca 30 mil e poucas iterações; os números saem um pouco piores e servem só para validar a execução. Não rode o notebook 03 em paralelo com outro job pesado: uma execução anterior foi encerrada por falta de memória exatamente assim.
+No modo rápido o treino usa 200 mil alunos, a busca 30 mil e poucas iterações; as métricas ficam um pouco abaixo das reportadas e servem para validar a execução. O notebook 03 não deve rodar em paralelo com outro processo pesado; com 15 GB de memória, a execução simultânea com o notebook 06 foi encerrada pelo sistema.
 
 ## Tempo de execução aproximado
 
