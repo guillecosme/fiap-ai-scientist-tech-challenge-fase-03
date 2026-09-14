@@ -61,16 +61,19 @@ O pipeline é ajustado dentro de cada fold da validação e é o objeto persisti
 - Validação: `StratifiedGroupKFold` por município. Busca aleatória de hiperparâmetros em amostra estratificada de 300 mil alunos para regressão logística, Random Forest e LightGBM.
 - Diagnóstico: gap treino-validação, ablação por bloco de variáveis e curva de aprendizado.
 - Ponto de operação: limiar escolhido para recall mínimo de 70% da classe "não alfabetizado" nas probabilidades fora da amostra de 2024.
+- Variante antes da prova (notebook 06): sem presença na prova e alunos avaliados na escola, que são medidas no dia da aplicação; é a versão para triagem antecipada.
 
 ### Modelo de risco municipal (notebook 04)
 
 - Alvo operacional: risco de não atingir a meta do ano. Alvo modelado: o nível do indicador (regressão), com o risco derivado por `P(resíduo < meta − nível previsto)` a partir da distribuição empírica dos resíduos da validação.
 - Motivo: a regra das metas mudou entre 2024 e 2025 (em 2024 a meta acompanhava o resultado de 2023; em 2025 exige saltos). O classificador direto do alvo binário aprende a regra de 2024 e cai de 0,81 para 0,60 de AUC no teste temporal (0,75 na logística); a regressão do nível com a meta aplicada depois mantém o AUC do risco em torno de 0,77.
 - Validação: `GroupKFold` por município; busca aleatória para Ridge, Random Forest e LightGBM; backtest 2024 para 2025; modelo final reajustado nas linhas de 2025 (retrato mais recente) para a projeção de 2026.
+- Seleção de features: Lasso (embedded) e RFE com LightGBM (wrapper), cada subconjunto reavaliado na mesma validação e no backtest.
+- Incerteza entre anos: na projeção de 2026 os resíduos da validação recebem um efeito ano uniforme de +/- 7,3 p.p., o viés medido no backtest. Só entra na projeção; o backtest usa exclusivamente resíduos de 2024.
 
 ### Perfis territoriais (notebook 05)
 
-K-Means sobre 15 variáveis de contexto padronizadas, K escolhido por cotovelo, silhueta e Davies-Bouldin, contraste com agrupamento hierárquico de Ward e PCA para interpretação. Os perfis são cruzados com o risco de 2026.
+K-Means sobre 15 variáveis de contexto padronizadas, K escolhido por cotovelo, silhueta e Davies-Bouldin, contraste com agrupamento hierárquico de Ward, mistura de gaussianas (BIC) e DBSCAN (k-distância), e PCA para interpretação. Os perfis são cruzados com o risco de 2026.
 
 ## 6. Avaliação
 
