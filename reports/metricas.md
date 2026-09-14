@@ -58,7 +58,7 @@ Ponto de operação (limiar 0,53 sobre a probabilidade de atingir):
 | validação 2024 | 0,797 | 0,723 | 0,739 | 0,740 | 0,739 | 0,706 | 0,704 |
 | teste 2025 | 0,772 | 0,652 | 0,887 | 0,589 | 0,708 | 0,439 | 0,811 |
 
-Projeção 2026: 5.477 municípios com meta. 914 com risco acima de 50% (`reports/municipios_risco_2026.csv`).
+Projeção 2026: 5.477 municípios com meta. 936 com risco acima de 50% (`reports/municipios_risco_2026.csv`).
 
 ## Perfis territoriais
 
