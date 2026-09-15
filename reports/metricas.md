@@ -60,6 +60,16 @@ Ponto de operação (limiar 0,53 sobre a probabilidade de atingir):
 
 Projeção 2026: 5.477 municípios com meta. 936 com risco acima de 50% (`reports/municipios_risco_2026.csv`).
 
+## Calibração e incerteza (notebook 06, sobre as predições salvas)
+
+Intervalo de 95% por bootstrap de municípios inteiros; Brier da taxa base = p(1-p).
+
+| Modelo | AUC | IC 95% | KS | Brier | Brier da taxa base |
+|---|---:|---:|---:|---:|---:|
+| aluno, teste 2025 | 0,646 | 0,638 a 0,656 | 0,210 | 0,216 | 0,226 |
+| município, risco no backtest 2025 | 0,772 | 0,758 a 0,785 | 0,408 | 0,243 | 0,203 |
+| município, risco com o efeito ano | 0,772 |  |  | 0,189 |  |
+
 ## Perfis territoriais
 
 K-Means com K = 4: silhueta 0,136, Davies-Bouldin 1,937; concordância com o hierárquico de Ward (Rand ajustado) 0,50. Perfis em `reports/perfis_municipios.csv`.
