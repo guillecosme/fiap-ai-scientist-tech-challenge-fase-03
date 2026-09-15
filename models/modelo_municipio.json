@@ -94,6 +94,27 @@
       "AUC risco teste 2025": 0.7623679613312656
     }
   },
+  "robustez": {
+    "alvo_embaralhado": {
+      "MAE (p.p.)": 16.2423721729265,
+      "Spearman": 0.01937942203228191,
+      "AUC do risco": 0.5208049932092834
+    },
+    "modelo_vs_salto": {
+      "AUC do modelo": 0.7716754512377353,
+      "AUC da regra": 0.7425595431025742,
+      "diferença": 0.029115908135161073,
+      "IC 95% inferior": 0.020668812772804898,
+      "IC 95% superior": 0.03745452071698755,
+      "n_reamostras": 1000.0
+    },
+    "lista_2026_nucleo": 926,
+    "lista_2026_franja": 17,
+    "mae_uf_excluida": 11.282243360796654,
+    "auc_risco_uf_excluida": 0.6417620067999927,
+    "mae_por_municipio_2024": 8.486175721493028,
+    "auc_risco_por_municipio_2024": 0.7970270084451524
+  },
   "features": {
     "historico": [
       "indicador_t1",
@@ -143,5 +164,5 @@
       "sigla_uf"
     ]
   },
-  "salvo_em": "2026-09-14T19:08:50+00:00"
+  "salvo_em": "2026-09-14T21:02:59+00:00"
 }
