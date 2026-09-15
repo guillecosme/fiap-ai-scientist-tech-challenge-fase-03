@@ -122,3 +122,84 @@ def risco_de_nao_atingir(
     folga = np.asarray(meta, dtype=float) - np.asarray(pred_nivel, dtype=float)
     risco = np.searchsorted(residuos, folga, side="right") / len(residuos)
     return np.where(np.isnan(folga), np.nan, risco)
+
+
+# ---------------------------------------------------------------------------
+# Calibracao e incerteza das metricas
+# ---------------------------------------------------------------------------
+
+
+def brier(y, proba, sample_weight=None) -> float:
+    """Erro quadratico medio da probabilidade; 0 e perfeito, 0,25 e o valor de
+    um modelo que responde 0,5 para todos."""
+    y = np.asarray(y).astype(float)
+    proba = np.asarray(proba).astype(float)
+    return float(np.average((proba - y) ** 2, weights=sample_weight))
+
+
+def ks(y, proba, sample_weight=None) -> float:
+    """Estatistica de Kolmogorov-Smirnov: maior distancia entre as distribuicoes
+    acumuladas da probabilidade nas duas classes."""
+    curva = curva_roc(y, proba, sample_weight=sample_weight)
+    return float((curva["tpr"] - curva["fpr"]).max())
+
+
+def curva_calibracao(y, proba, n_faixas: int = 10, sample_weight=None) -> pd.DataFrame:
+    """Probabilidade media prevista e frequencia observada por faixa de
+    probabilidade (faixas de largura igual)."""
+    y = np.asarray(y).astype(float)
+    proba = np.asarray(proba).astype(float)
+    w = np.ones_like(proba) if sample_weight is None else np.asarray(sample_weight).astype(float)
+    faixa = np.clip((proba * n_faixas).astype(int), 0, n_faixas - 1)
+    linhas = []
+    for f in range(n_faixas):
+        m = faixa == f
+        if not m.any():
+            continue
+        linhas.append(
+            {
+                "faixa": f"{f / n_faixas:.1f} a {(f + 1) / n_faixas:.1f}",
+                "prevista": float(np.average(proba[m], weights=w[m])),
+                "observada": float(np.average(y[m], weights=w[m])),
+                "n": int(m.sum()),
+                "peso": float(w[m].sum()),
+            }
+        )
+    return pd.DataFrame(linhas)
+
+
+def ic_bootstrap(
+    y,
+    proba,
+    grupos,
+    metrica=roc_auc_score,
+    n_reamostras: int = 200,
+    sample_weight=None,
+    seed: int = 42,
+    nivel: float = 0.95,
+) -> dict[str, float]:
+    """Intervalo de confianca de uma metrica por bootstrap de grupos (municipios):
+    cada reamostra sorteia municipios inteiros com reposicao, o que respeita a
+    dependencia entre alunos do mesmo municipio."""
+    y = np.asarray(y)
+    proba = np.asarray(proba)
+    grupos = np.asarray(grupos)
+    w = None if sample_weight is None else np.asarray(sample_weight)
+    codigos, inverso = np.unique(grupos, return_inverse=True)
+    por_grupo = [np.flatnonzero(inverso == g) for g in range(len(codigos))]
+    rng = np.random.default_rng(seed)
+    valores = []
+    for _ in range(n_reamostras):
+        sorteio = rng.integers(0, len(codigos), len(codigos))
+        idx = np.concatenate([por_grupo[g] for g in sorteio])
+        kw = {} if w is None else {"sample_weight": w[idx]}
+        valores.append(metrica(y[idx], proba[idx], **kw))
+    valores = np.asarray(valores)
+    alfa = (1 - nivel) / 2
+    return {
+        "estimativa": float(metrica(y, proba, **({} if w is None else {"sample_weight": w}))),
+        "ic_inferior": float(np.quantile(valores, alfa)),
+        "ic_superior": float(np.quantile(valores, 1 - alfa)),
+        "desvio": float(valores.std(ddof=1)),
+        "n_reamostras": int(n_reamostras),
+    }
