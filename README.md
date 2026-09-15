@@ -279,9 +279,10 @@ Cinco testes que tentam derrubar os modelos, consolidados em [reports/robustez.m
 | Teste | Município | Aluno |
 |---|---|---|
 | alvo embaralhado | vai para o nível da média (MAE 16,2 contra 16,1; AUC do risco 0,52) | embaralhado dentro do município, AUC 0,655 contra 0,665: quase toda a ordenação vem do município |
-| modelo contra regra simples (IC pareado, bootstrap de municípios) | +0,029 de AUC sobre "salto necessário" (0,021 a 0,037) | +0,006 sobre "% alfabetizados no ano anterior" (0,004 a 0,009) |
-| completa contra antes da prova | | +0,005 (0,003 a 0,007) |
+| modelo contra regra simples (IC pareado por bootstrap de municípios, 97,5% por comparação com correção de Bonferroni) | +0,029 de AUC sobre "salto necessário" (0,019 a 0,039) | +0,006 sobre "% alfabetizados no ano anterior" (0,004 a 0,009) |
+| completa contra antes da prova | | +0,005 (0,003 a 0,008) |
 | ausência prediz o alvo | maior AUC de ausência 0,504 | |
+| gate automático (`tests/test_vazamento.py`) | nenhuma variável isolada com AUC acima de 0,90 (maior: 0,62) nem ausência acima de 0,60 | idem (maior: 0,64) |
 | estabilidade da lista de 2026 | 926 municípios em 95% das reamostras; franja de 17 | |
 | estado nunca visto | MAE 8,5 para 11,3 p.p.; AUC do risco 0,80 para 0,64; dentro de cada UF o AUC quase não muda, o patamar erra até 19 p.p. | AUC 0,665 para 0,641; dentro de cada UF, diferença mediana de -0,002 |
 
@@ -392,7 +393,7 @@ O notebook 06 traz gráficos em cascata para um município no topo da lista de r
 ```bash
 uv sync                    # ou: pip install -r requirements.txt
 make notebooks             # caminho curto: Gold e ABTs já versionadas
-make test                  # 35 testes
+make test                  # 37 testes
 ```
 
 Do dado bruto: `make data` (cerca de 900 MB), `make gold`, `make abt`, depois `make notebooks`. `make train` treina os dois modelos pela linha de comando. O notebook 03 leva cerca de uma hora e usa 6 GB de memória; `TC_RAPIDO=1` executa uma versão reduzida em poucos minutos. Tempos, determinismo e problemas conhecidos em [docs/reprodutibilidade.md](docs/reprodutibilidade.md).

@@ -14,5 +14,5 @@
   "auc_aluno_uf_nunca_vista": "0,641",
   "auc_aluno_amostra_municipio": "0,665",
   "dif_aluno_vs_regra": "0,006 (IC 0,004 a 0,009)",
-  "dif_completo_vs_antes": "0,005 (IC 0,003 a 0,007)"
+  "dif_completo_vs_antes": "0,005 (IC 0,003 a 0,008)"
 }

@@ -15,9 +15,10 @@ Tabela única com os testes que tentam derrubar os dois modelos: intervalos de c
 | Teste | Município | Aluno |
 |---|---|---|
 | alvo embaralhado | MAE 16,2 p.p. (prever a média: 16,1); Spearman 0,02; AUC do risco 0,52 | AUC 0,655 com o alvo embaralhado dentro do município, contra 0,665 com o alvo verdadeiro: quase toda a ordenação vem do município |
-| modelo contra regra simples, IC pareado | +0,029 de AUC sobre "salto necessário" (IC 0,021 a 0,037); +0,126 sobre "% alfabetizados no ano anterior" | +0,006 sobre "% alfabetizados do município no ano anterior" (IC 0,004 a 0,009) |
-| variante completa contra antes da prova | | +0,005 (IC 0,003 a 0,007) |
+| modelo contra regra simples, IC pareado (97,5% por comparação, Bonferroni) | +0,029 de AUC sobre "salto necessário" (IC 0,019 a 0,039); +0,126 sobre "% alfabetizados no ano anterior" (0,110 a 0,143) | +0,006 sobre "% alfabetizados do município no ano anterior" (IC 0,004 a 0,009) |
+| variante completa contra antes da prova | | +0,005 (IC 0,003 a 0,008) |
 | ausência prediz o alvo | maior AUC de um indicador de ausência: 0,504 | |
+| gate automático de vazamento (`tests/test_vazamento.py`) | nenhuma variável isolada com AUC acima de 0,90 (maior: salto necessário, 0,62); ausência abaixo de 0,60 | maior AUC isolado 0,64 (% alfabetizados no ano anterior) |
 | estabilidade da lista de 2026 | 926 municípios na lista em 95% ou mais de 500 reamostras dos resíduos; franja de 17 | |
 
 ## Extrapolação para estado nunca visto (`reports/extrapolacao_uf.csv`, `reports/extrapolacao_uf_aluno.csv`)
