@@ -1,0 +1,6 @@
+,AUC fora da amostra,bloco,AUC do modelo completo,AUC do comparado,diferença,IC 95% inferior,IC 95% superior,n_reamostras
+"alvo verdadeiro, folds por município",0.6645,falsificação,,,,,,
+"alvo embaralhado dentro do município, folds por município",0.6549,falsificação,,,,,,
+"alvo verdadeiro, folds por UF (estado nunca visto)",0.641,falsificação,,,,,,
+modelo completo contra regra (% alfabetizados no ano anterior),,bootstrap pareado,0.646,0.6401,0.0058,0.0038,0.0086,200.0
+modelo completo contra variante antes da prova,,bootstrap pareado,0.646,0.6411,0.0049,0.003,0.0071,200.0
