@@ -203,3 +203,19 @@ def ic_bootstrap(
         "desvio": float(valores.std(ddof=1)),
         "n_reamostras": int(n_reamostras),
     }
+
+
+def auc_da_ausencia(x: pd.DataFrame, y, sample_weight=None) -> pd.DataFrame:
+    """AUC do indicador de ausencia de cada coluna contra o alvo, como
+    max(auc, 1 - auc). Um valor alto diz que o simples fato de a variavel
+    faltar ja prediz o alvo, o que pode ser um atalho de coleta."""
+    y = np.asarray(y).astype(int)
+    linhas = []
+    for c in x.columns:
+        ausente = x[c].isna().to_numpy().astype(float)
+        n_aus = int(ausente.sum())
+        if n_aus == 0 or n_aus == len(ausente):
+            continue
+        auc = roc_auc_score(y, ausente, sample_weight=sample_weight)
+        linhas.append({"variavel": c, "ausentes": n_aus, "auc_ausencia": float(max(auc, 1 - auc))})
+    return pd.DataFrame(linhas).sort_values("auc_ausencia", ascending=False).reset_index(drop=True)
