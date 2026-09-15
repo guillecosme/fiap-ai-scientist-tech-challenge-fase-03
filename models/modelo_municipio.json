@@ -104,10 +104,11 @@
       "AUC do modelo": 0.7716754512377353,
       "AUC da regra": 0.7425595431025742,
       "diferença": 0.029115908135161073,
-      "IC 95% inferior": 0.020668812772804898,
-      "IC 95% superior": 0.03745452071698755,
+      "IC 97,5% inferior": 0.01920418081766976,
+      "IC 97,5% superior": 0.038737389758543676,
       "n_reamostras": 1000.0
     },
+    "nivel_ic_comparacoes": 0.975,
     "lista_2026_nucleo": 926,
     "lista_2026_franja": 17,
     "mae_uf_excluida": 11.282243360796654,
@@ -164,5 +165,5 @@
       "sigla_uf"
     ]
   },
-  "salvo_em": "2026-09-14T21:02:59+00:00"
+  "salvo_em": "2026-09-14T21:41:55+00:00"
 }
