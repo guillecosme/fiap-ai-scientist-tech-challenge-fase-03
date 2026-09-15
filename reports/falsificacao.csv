@@ -1,0 +1,6 @@
+,MAE (p.p.),Spearman,AUC do risco,bloco,AUC do modelo,AUC da regra,diferença,IC 95% inferior,IC 95% superior,n_reamostras
+"modelo, validação 2024",8.4862,0.8032,0.797,alvo embaralhado,,,,,,
+"alvo embaralhado, validação 2024",16.2424,0.0194,0.5208,alvo embaralhado,,,,,,
+prever a média,16.0861,0.0,0.5,alvo embaralhado,,,,,,
+salto necessário,,,,modelo contra regra,0.7717,0.7426,0.0291,0.0207,0.0375,1000.0
+% alfabetizados no ano anterior,,,,modelo contra regra,0.7717,0.6454,0.1263,0.1124,0.1408,1000.0
