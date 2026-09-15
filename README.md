@@ -55,6 +55,7 @@ Construir uma pipeline completa de Machine Learning, do dado bruto ao modelo int
 | Quais regiões possuem padrões semelhantes | quatro perfis de município (K-Means, hierárquico, PCA), cruzados com o risco | notebook 05, `reports/perfis_municipios.csv` |
 | Como prever municípios que podem não atingir metas futuras | backtest 2024 para 2025 e projeção para 2026 | notebook 04, `reports/risco_2026_por_uf.csv` |
 | Quais fatores e variáveis mais influenciam | SHAP global, por bloco e local; importância por permutação; seleção de features (Lasso e RFE) | notebooks 04 e 06, `reports/importancia_*.csv` |
+| Validação e robustez | teste temporal, IC por bootstrap, calibração, falsificação (alvo embaralhado, regra simples, ausência, estabilidade da lista) e extrapolação para UF nunca vista | notebooks 04 e 06, `reports/robustez.md` |
 
 ## 3. Descrição da base utilizada
 
@@ -188,9 +189,9 @@ Outros achados da EDA: correlações altas entre nível e indicador do ano anter
 | 1. Base e qualidade | [01_base_gold_e_qualidade](notebooks/01_base_gold_e_qualidade.ipynb) | tabelas da Gold, cobertura por ano, doze checagens de qualidade (chaves, faixas, corte de 743, metas não decrescentes, cálculo próprio contra o oficial), ABTs e referências temporais |
 | 2. EDA e hipóteses | [02_eda_e_hipoteses](notebooks/02_eda_e_hipoteses.ipynb) | catorze hipóteses testadas e a tabela de decisões |
 | 3. Modelo do aluno | [03_modelo_aluno](notebooks/03_modelo_aluno.ipynb) | busca de hiperparâmetros em amostra estratificada de 300 mil alunos, ablação por bloco, curva de aprendizado, ajuste final em 1,85 milhão de alunos, limiar de operação, teste em 2025, análise de erros |
-| 4. Risco municipal | [04_modelo_municipio_risco](notebooks/04_modelo_municipio_risco.ipynb) | classificador direto e regressão do nível com risco derivado, backtest 2024 para 2025, projeção 2026 e ranking |
+| 4. Risco municipal | [04_modelo_municipio_risco](notebooks/04_modelo_municipio_risco.ipynb) | classificador direto e regressão do nível com risco derivado, backtest 2024 para 2025, projeção 2026 e ranking, falsificação (alvo embaralhado, regra simples, ausência, estabilidade da lista) e leave-one-UF-out |
 | 5. Perfis territoriais | [05_perfis_territoriais](notebooks/05_perfis_territoriais.ipynb) | K-Means com cotovelo, silhueta e Davies-Bouldin, hierárquico de Ward, PCA, perfis e matriz perfil x risco |
-| 6. Interpretabilidade | [06_interpretabilidade_e_aplicacao](notebooks/06_interpretabilidade_e_aplicacao.ipynb) | SHAP global, por bloco, dependência e local; permutação; mapas; respostas às cinco perguntas |
+| 6. Interpretabilidade | [06_interpretabilidade_e_aplicacao](notebooks/06_interpretabilidade_e_aplicacao.ipynb) | SHAP global, por bloco, dependência e local; permutação; mapas; respostas às cinco perguntas, calibração e IC por bootstrap, falsificação e folds por UF do modelo do aluno |
 
 ### 6.1 Modelo do aluno
 
@@ -271,7 +272,22 @@ Intervalos de confiança de 95% por bootstrap de municípios inteiros (100 reamo
 
 Duas leituras. No aluno, o intervalo tem menos de 0,02 de largura: a diferença entre as famílias na busca e entre as duas variantes (0,641 e 0,646) é da ordem do ruído amostral, e a escolha entre elas é de disponibilidade das variáveis, não de desempenho. No município, o risco do backtest ordena bem mas está inflado: na faixa de 80% a 100% de risco, 52% dos municípios de fato não atingiram a meta, e o Brier fica acima do da taxa base. Corrigido o nível pelo efeito ano conhecido a posteriori (+7,3 p.p.), o mesmo risco passa a Brier 0,189 e a curva se aproxima da diagonal. É a evidência direta de que o efeito ano é a maior fonte de erro da projeção e a razão de ele entrar na incerteza de 2026: o risco é um instrumento de ordenação e de corte, não uma probabilidade a ser lida ao pé da letra.
 
-### 8.4 Perfis
+### 8.4 Falsificação e extrapolação
+
+Cinco testes que tentam derrubar os modelos, consolidados em [reports/robustez.md](reports/robustez.md) (notebooks 04 e 06; tabelas em `reports/falsificacao*.csv` e `reports/extrapolacao_uf*.csv`).
+
+| Teste | Município | Aluno |
+|---|---|---|
+| alvo embaralhado | vai para o nível da média (MAE 16,2 contra 16,1; AUC do risco 0,52) | embaralhado dentro do município, AUC 0,655 contra 0,665: quase toda a ordenação vem do município |
+| modelo contra regra simples (IC pareado, bootstrap de municípios) | +0,029 de AUC sobre "salto necessário" (0,021 a 0,037) | +0,006 sobre "% alfabetizados no ano anterior" (0,004 a 0,009) |
+| completa contra antes da prova | | +0,005 (0,003 a 0,007) |
+| ausência prediz o alvo | maior AUC de ausência 0,504 | |
+| estabilidade da lista de 2026 | 926 municípios em 95% das reamostras; franja de 17 | |
+| estado nunca visto | MAE 8,5 para 11,3 p.p.; AUC do risco 0,80 para 0,64; dentro de cada UF o AUC quase não muda, o patamar erra até 19 p.p. | AUC 0,665 para 0,641; dentro de cada UF, diferença mediana de -0,002 |
+
+Três leituras. O ganho do modelo municipal sobre a regra "quanto falta para a meta" é real, mas modesto: a regra é uma alternativa honesta para quem não quiser um modelo. No aluno, o teste do alvo embaralhado dentro do município é o mais informativo do projeto: o modelo do aluno é, na prática, um modelo do contexto municipal com um ganho marginal da escola, e uma regra de uma variável chega a 0,64. E os dois modelos generalizam para municípios novos de estados conhecidos, que é o caso da projeção de 2026, mas em um estado nunca visto acertam a ordem e erram o patamar; a transferência para outro contexto exigiria reajuste.
+
+### 8.5 Perfis
 
 Silhueta 0,136 e Davies-Bouldin 1,937 para K = 4; a silhueta é baixa em todos os K testados (2 a 10), o que é esperado em dados socioeducacionais, que formam um contínuo. Rand ajustado de 0,50 entre K-Means e Ward.
 
@@ -310,7 +326,7 @@ O notebook 06 traz gráficos em cascata para um município no topo da lista de r
 1. **A UF explica um terço da variação do indicador entre municípios; a região, 6%.** Ceará e Bahia são vizinhos e estão em extremos opostos. Regime de colaboração estadual e instrumento de avaliação pesam mais do que geografia.
 2. **Fluxo escolar tem correlação três vezes maior com o resultado do que renda.** Abandono, reprovação e distorção idade-série nos anos iniciais (-0,35 a -0,39) contra INSE (0,09) e PIB per capita (0,04). Dentro do modelo, o histórico e o IDEB absorvem a maior parte desse sinal.
 3. **Municípios menores têm indicador maior** (Spearman -0,28 com a população).
-4. **85% da variação entre alunos está dentro da escola.** Sem variáveis individuais, qualquer modelo tem esse teto; o uso do modelo do aluno é ordenar escolas e redes.
+4. **85% da variação entre alunos está dentro da escola, e quase toda a ordenação do modelo do aluno vem do município.** Com o alvo embaralhado dentro do município o AUC cai só de 0,665 para 0,655; uma regra de uma variável (% alfabetizados do município no ano anterior) chega a 0,64. Sem variáveis individuais, qualquer modelo tem esse teto; o uso do modelo do aluno é ordenar escolas e redes.
 5. **Alvo binário dependente de regra administrativa não generaliza entre anos.** O classificador direto aprendeu a regra de 2024 e falhou em 2025; a regressão do nível com a meta aplicada depois é a formulação que se mantém.
 6. **2025 foi um ano de salto** (6,8 pontos no indicador nacional; 9 na média municipal), com regressão à média em relação a 2024 (correlação de -0,41 entre a variação de 2024 e a de 2025). Modelos treinados em um ano subestimam o seguinte; o reajuste anual faz parte do método.
 7. **O Rio Grande do Sul lidera o risco de 2026 por causa das metas, não das redes.** As metas foram ancoradas no nível de 2023 (73% em média); o estado caiu para 52% em 2024 (enchentes) e voltou a 64% em 2025; a meta de 2026 (74%) exige superar o nível anterior ao choque. 70% dos municípios gaúchos ficam com risco acima de 50%.
@@ -321,7 +337,7 @@ O notebook 06 traz gráficos em cascata para um município no topo da lista de r
 
 - **Sem variáveis do aluno.** Os microdados não trazem sexo, idade, nível socioeconômico individual nem trajetória escolar. O modelo do aluno é um modelo de contexto, e o AUC de 0,65 reflete esse teto.
 - **Variáveis medidas no dia da prova.** Presença e alunos avaliados na escola só existem na aplicação; o modelo completo lê o resultado depois da prova e a variante sem elas é a que serve à triagem antecipada (AUC 0,641 contra 0,646).
-- **Comparabilidade entre UFs.** Cada estado aplica a própria avaliação, pareada à escala Saeb. Parte do efeito da UF pode ser do instrumento, e o modelo não separa isso da gestão.
+- **Comparabilidade entre UFs.** Cada estado aplica a própria avaliação, pareada à escala Saeb. Parte do efeito da UF pode ser do instrumento, e o modelo não separa isso da gestão. Em um estado nunca visto no treino, o modelo municipal mantém a ordenação dentro do estado mas erra o patamar em até 19 p.p. (leave-one-UF-out), e o risco fica comprometido; o modelo não deve ser transferido para outro contexto sem reajuste.
 - **Série curta.** Três anos do indicador impedem modelos de série temporal e deixam as variáveis de defasagem dupla fora do modelo principal (só existem a partir de 2025).
 - **Choques não previstos.** O aumento nacional de 2025 e a queda do Rio Grande do Sul em 2024 não eram previsíveis a partir do contexto. O modelo projeta a trajetória dado o contexto; não antecipa programas novos nem eventos externos. O efeito ano de +/- 7 p.p. na projeção representa essa incerteza, mas é uma estimativa a partir de uma única transição observada.
 - **Fontes com defasagem.** PIB de 2021 (última edição com composição setorial), INSE de 2023; na projeção de 2026 valem as últimas edições publicadas.
@@ -376,7 +392,7 @@ O notebook 06 traz gráficos em cascata para um município no topo da lista de r
 ```bash
 uv sync                    # ou: pip install -r requirements.txt
 make notebooks             # caminho curto: Gold e ABTs já versionadas
-make test                  # 30 testes
+make test                  # 35 testes
 ```
 
 Do dado bruto: `make data` (cerca de 900 MB), `make gold`, `make abt`, depois `make notebooks`. `make train` treina os dois modelos pela linha de comando. O notebook 03 leva cerca de uma hora e usa 6 GB de memória; `TC_RAPIDO=1` executa uma versão reduzida em poucos minutos. Tempos, determinismo e problemas conhecidos em [docs/reprodutibilidade.md](docs/reprodutibilidade.md).

@@ -50,9 +50,9 @@ No modo rápido o treino usa 200 mil alunos, a busca 30 mil e poucas iterações
 | notebook 01 | 1 min |
 | notebook 02 | 2 min |
 | notebook 03 (modelo do aluno) | cerca de 60 min (3 min no modo rápido) |
-| notebook 04 (risco municipal) | 5 min |
+| notebook 04 (risco municipal, falsificação e leave-one-UF-out) | 9 min |
 | notebook 05 (perfis) | 1 min |
-| notebook 06 (interpretabilidade, calibração e bootstrap) | 8 min |
+| notebook 06 (interpretabilidade, calibração, bootstrap e falsificação do aluno) | 20 min |
 
 ## Determinismo
 
@@ -69,7 +69,7 @@ No modo rápido o treino usa 200 mil alunos, a busca 30 mil e poucas iterações
 | `data/gold` | Gold em Parquet | sim |
 | `data/processed` | ABTs em Parquet | sim |
 | `models` | pipelines completos (`.joblib`), metadados (`.json`), predições fora da amostra e do backtest (`.parquet`) | sim |
-| `reports` | rankings de risco, perfis, importâncias, apresentação | sim |
+| `reports` | rankings de risco, perfis, importâncias, métricas, robustez, apresentação | sim |
 | `images` | figuras dos notebooks | sim |
 
 ## Problemas conhecidos

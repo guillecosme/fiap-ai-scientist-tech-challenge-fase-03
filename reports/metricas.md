@@ -70,6 +70,18 @@ Intervalo de 95% por bootstrap de municípios inteiros; Brier da taxa base = p(1
 | município, risco no backtest 2025 | 0,772 | 0,758 a 0,785 | 0,408 | 0,243 | 0,203 |
 | município, risco com o efeito ano | 0,772 |  |  | 0,189 |  |
 
+## Falsificação e extrapolação
+
+Resumo; tabela completa em `reports/robustez.md`.
+
+| Teste | Município | Aluno |
+|---|---|---|
+| alvo embaralhado | MAE 16,2 p.p., AUC do risco 0,52 | AUC 0,655 (embaralhado dentro do município) contra 0,665 |
+| modelo contra regra simples | +0,029 de AUC (IC 0,021 a 0,037) | +0,006 (IC 0,004 a 0,009) |
+| completa contra antes da prova | | +0,005 (IC 0,003 a 0,007) |
+| estabilidade da lista de 2026 | núcleo 926, franja 17 | |
+| estado nunca visto | MAE 8,5 para 11,3 p.p.; AUC do risco 0,80 para 0,64 | AUC 0,665 para 0,641 |
+
 ## Perfis territoriais
 
 K-Means com K = 4: silhueta 0,136, Davies-Bouldin 1,937; concordância com o hierárquico de Ward (Rand ajustado) 0,50. Perfis em `reports/perfis_municipios.csv`.

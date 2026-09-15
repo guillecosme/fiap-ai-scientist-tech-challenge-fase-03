@@ -84,6 +84,8 @@ K-Means sobre 15 variáveis de contexto padronizadas, K escolhido por cotovelo, 
 | município (risco) | AUC do risco no backtest | matriz de confusão no limiar de operação | recall da classe "não atingiu" |
 | perfis | silhueta | Davies-Bouldin, índice de Rand ajustado (K-Means x Ward) | |
 
+Cada modelo passa ainda por testes de falsificação e de extrapolação (notebooks 04 e 06, consolidados em `reports/robustez.md`): alvo embaralhado (o desempenho deve ir ao nível da média; no aluno, embaralhado dentro do município, mede quanto da ordenação vem do município), comparação com uma regra de uma variável por bootstrap pareado de municípios, AUC do indicador de ausência de cada variável, estabilidade da lista de 2026 sob reamostragem dos resíduos e leave-one-UF-out (município) ou folds por UF (aluno), que separam generalizar para municípios novos de extrapolar para estados novos.
+
 Para os dois modelos supervisionados a incerteza do AUC é estimada por bootstrap de municípios inteiros (intervalo de 95%) e a calibração das probabilidades pelo escore de Brier e pela curva de calibração, sobre as predições salvas do teste temporal. O risco municipal do backtest é comparado com o mesmo risco corrigido pelo efeito ano conhecido a posteriori, o que mede quanto do erro de calibração vem do deslocamento entre anos.
 
 Em todos os casos as métricas são reportadas para treino e validação (para ler overfitting) e para o teste temporal (para ler generalização no tempo).
