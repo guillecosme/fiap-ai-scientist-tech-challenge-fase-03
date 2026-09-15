@@ -52,7 +52,7 @@ No modo rápido o treino usa 200 mil alunos, a busca 30 mil e poucas iterações
 | notebook 03 (modelo do aluno) | cerca de 60 min (3 min no modo rápido) |
 | notebook 04 (risco municipal) | 5 min |
 | notebook 05 (perfis) | 1 min |
-| notebook 06 (interpretabilidade) | 3 min |
+| notebook 06 (interpretabilidade, calibração e bootstrap) | 8 min |
 
 ## Determinismo
 

@@ -84,6 +84,8 @@ K-Means sobre 15 variáveis de contexto padronizadas, K escolhido por cotovelo, 
 | município (risco) | AUC do risco no backtest | matriz de confusão no limiar de operação | recall da classe "não atingiu" |
 | perfis | silhueta | Davies-Bouldin, índice de Rand ajustado (K-Means x Ward) | |
 
+Para os dois modelos supervisionados a incerteza do AUC é estimada por bootstrap de municípios inteiros (intervalo de 95%) e a calibração das probabilidades pelo escore de Brier e pela curva de calibração, sobre as predições salvas do teste temporal. O risco municipal do backtest é comparado com o mesmo risco corrigido pelo efeito ano conhecido a posteriori, o que mede quanto do erro de calibração vem do deslocamento entre anos.
+
 Em todos os casos as métricas são reportadas para treino e validação (para ler overfitting) e para o teste temporal (para ler generalização no tempo).
 
 ## 7. Interpretabilidade

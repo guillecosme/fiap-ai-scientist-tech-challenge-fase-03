@@ -259,7 +259,19 @@ Projeção 2026: 936 municípios com risco acima de 50% (914 sem o efeito ano); 
 
 O R² do nível em 2025 (0,11) mede o quanto o modelo explica da variação de um ano que incluiu um deslocamento nacional; as métricas de ordenação, que são as relevantes para a lista de risco, são o Spearman e o AUC do risco. O viés de -7,3 p.p. em 2025 corresponde ao aumento nacional do indicador naquele ano, concentrado em alguns estados (Bahia, Acre, Alagoas e Tocantins subiram mais de 15 pontos). O modelo treinado em 2024 subestima o nível de 2025, mas preserva a ordem dos municípios (Spearman 0,69). No ponto de operação, o modelo de 2024 aplicado a 2025 classifica mais municípios como em risco do que o necessário (recall dos negativos sobe para 0,81 e a precisão cai para 0,44), o erro menos custoso para uma lista de triagem.
 
-### 8.3 Perfis
+### 8.3 Calibração e incerteza das métricas
+
+Intervalos de confiança de 95% por bootstrap de municípios inteiros (100 reamostras no aluno, 500 no município), escore de Brier (erro quadrático da probabilidade; a referência é o de um modelo que responde sempre a taxa base) e estatística KS, calculados sobre as predições salvas em `models/` (notebook 06). Tabelas em [reports/intervalos_confianca.csv](reports/intervalos_confianca.csv) e [reports/calibracao.csv](reports/calibracao.csv); curvas em `images/06_calibracao.png`.
+
+| Modelo | AUC | IC 95% | KS | Brier | Brier da taxa base |
+|---|---:|---:|---:|---:|---:|
+| aluno, teste 2025 | 0,646 | 0,638 a 0,656 | 0,210 | 0,216 | 0,226 |
+| município, risco no backtest 2025 | 0,772 | 0,758 a 0,785 | 0,408 | 0,243 | 0,203 |
+| município, risco com o efeito ano conhecido | 0,772 | | | 0,189 | 0,203 |
+
+Duas leituras. No aluno, o intervalo tem menos de 0,02 de largura: a diferença entre as famílias na busca e entre as duas variantes (0,641 e 0,646) é da ordem do ruído amostral, e a escolha entre elas é de disponibilidade das variáveis, não de desempenho. No município, o risco do backtest ordena bem mas está inflado: na faixa de 80% a 100% de risco, 52% dos municípios de fato não atingiram a meta, e o Brier fica acima do da taxa base. Corrigido o nível pelo efeito ano conhecido a posteriori (+7,3 p.p.), o mesmo risco passa a Brier 0,189 e a curva se aproxima da diagonal. É a evidência direta de que o efeito ano é a maior fonte de erro da projeção e a razão de ele entrar na incerteza de 2026: o risco é um instrumento de ordenação e de corte, não uma probabilidade a ser lida ao pé da letra.
+
+### 8.4 Perfis
 
 Silhueta 0,136 e Davies-Bouldin 1,937 para K = 4; a silhueta é baixa em todos os K testados (2 a 10), o que é esperado em dados socioeducacionais, que formam um contínuo. Rand ajustado de 0,50 entre K-Means e Ward.
 
@@ -364,7 +376,7 @@ O notebook 06 traz gráficos em cascata para um município no topo da lista de r
 ```bash
 uv sync                    # ou: pip install -r requirements.txt
 make notebooks             # caminho curto: Gold e ABTs já versionadas
-make test                  # 26 testes
+make test                  # 30 testes
 ```
 
 Do dado bruto: `make data` (cerca de 900 MB), `make gold`, `make abt`, depois `make notebooks`. `make train` treina os dois modelos pela linha de comando. O notebook 03 leva cerca de uma hora e usa 6 GB de memória; `TC_RAPIDO=1` executa uma versão reduzida em poucos minutos. Tempos, determinismo e problemas conhecidos em [docs/reprodutibilidade.md](docs/reprodutibilidade.md).
