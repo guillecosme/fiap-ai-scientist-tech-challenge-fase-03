@@ -1,0 +1,4 @@
+,AUC,IC 95% inferior,IC 95% superior,KS,Brier,Brier da taxa base
+"aluno, teste 2025",0.6463,0.6378,0.6558,0.2104,0.2159,0.2255
+"município, risco no backtest 2025",0.7717,0.7578,0.7853,0.408,0.2432,0.2034
+"município, risco com o efeito ano",0.7717,,,,0.1894,

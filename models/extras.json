@@ -2,5 +2,12 @@
   "silhueta": "0,136",
   "davies_bouldin": "1,937",
   "ari": "0,50",
-  "auc_salto_2025": "0,74"
+  "auc_salto_2025": "0,74",
+  "auc_aluno_ic95": "0,638 a 0,656",
+  "auc_risco_ic95": "0,758 a 0,785",
+  "brier_aluno": "0,216",
+  "brier_risco": "0,243",
+  "brier_risco_com_efeito_ano": "0,189",
+  "ks_aluno": "0,210",
+  "ks_risco": "0,408"
 }
