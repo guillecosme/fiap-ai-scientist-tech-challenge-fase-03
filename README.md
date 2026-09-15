@@ -5,7 +5,8 @@ Tech Challenge da Fase 3 do MBA em AI Scientist (FIAP / POSTECH). O projeto usa 
 Aluno: Guilherme Cosme (RM 372204).
 
 - Apresentação executiva: [reports/slides/RM372204 - Guilherme Cosme - Tech Challenge Fase 03.pdf](<reports/slides/RM372204 - Guilherme Cosme - Tech Challenge Fase 03.pdf>)
-- Vídeo executivo (até 5 min): [https://www.loom.com/share/447ba58dab7f4fd8ae69ce14f2f96847](https://www.loom.com/share/447ba58dab7f4fd8ae69ce14f2f96847) (também em [reports/slides/link_do_video.txt](reports/slides/link_do_video.txt))
+- Pacote da entrega (apresentação em pdf e pptx mais os links): [reports/slides/RM372204 - Guilherme Cosme - Tech Challenge Fase 03.zip](<reports/slides/RM372204 - Guilherme Cosme - Tech Challenge Fase 03.zip>)
+- Vídeo executivo (até 5 min): [https://www.loom.com/share/447ba58dab7f4fd8ae69ce14f2f96847](https://www.loom.com/share/447ba58dab7f4fd8ae69ce14f2f96847) (também em [reports/slides/links_video_e_github.txt](reports/slides/links_video_e_github.txt))
 - Ranking de risco 2026: [reports/municipios_risco_2026.csv](reports/municipios_risco_2026.csv)
 - Métricas consolidadas: [reports/metricas.md](reports/metricas.md)
 
