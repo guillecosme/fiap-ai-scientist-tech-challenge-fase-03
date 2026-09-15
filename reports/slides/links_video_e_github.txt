@@ -1,0 +1,10 @@
+Tech Challenge Fase 3 - Predicao e Inteligencia Analitica para Alfabetizacao no Brasil
+Guilherme Cosme - RM 372204 - Turma 1IAST - MBA AI Scientist FIAP / POSTECH
+
+Video executivo (5 min):
+https://www.loom.com/share/447ba58dab7f4fd8ae69ce14f2f96847
+
+Repositorio no GitHub:
+https://github.com/guillecosme/fiap-ai-scientist-tech-challenge-fase-03
+
+Apresentacao: RM372204 - Guilherme Cosme - Tech Challenge Fase 03.pdf (e .pptx)
