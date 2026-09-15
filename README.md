@@ -100,7 +100,7 @@ FUNDEB, Cadastro Único, Atlas do Desenvolvimento Humano e PNAD foram avaliados 
 
 Duas bases saem da Gold (`make abt`):
 
-- **ABT de município** (`data/processed/abt_municipio.parquet`): uma linha por município e ano-alvo (2024 e 2025 com alvo; 2026 para projeção), 56 colunas;
+- **ABT de município** (`data/processed/abt_municipio.parquet`): uma linha por município e ano-alvo (2024 e 2025 com alvo; 2026 para projeção), 60 colunas;
 - **ABT de aluno** (`data/processed/abt_aluno.parquet`): uma linha por aluno avaliado (3.817.947), com rede, escola (alunos avaliados e presença) e as chaves para juntar o contexto municipal do mesmo ano.
 
 Para o ano-alvo t (prova aplicada em outubro e novembro), só entram variáveis conhecidas antes da prova:
@@ -114,7 +114,22 @@ Para o ano-alvo t (prova aplicada em outubro e novembro), só entram variáveis 
 | Meta | t | 2024 | 2025 | 2026 |
 | Censo 2022, PIB 2021, INSE 2023 | estáticos | | | |
 
-A regra está em `src/data/abt.py` e é verificada em `tests/test_abt.py`. Dicionário completo em [docs/dicionario_de_dados.md](docs/dicionario_de_dados.md).
+A regra está em `src/data/abt.py` e é verificada em `tests/test_abt.py`.
+
+Variáveis que entram nos modelos, por bloco (42 no aluno, 39 no município, 15 nos perfis; a lista completa, com rótulo, fonte, ano de referência, transformação e modelo em que entra, está na seção "Variáveis dos modelos" de [docs/dicionario_de_dados.md](docs/dicionario_de_dados.md)):
+
+| Bloco | Variáveis | Exemplos | Aluno | Município | Perfis |
+|---|---:|---|:---:|:---:|:---:|
+| histórico do indicador | 3 | % alfabetizados e participação no ano anterior, salto necessário para a meta | sim | sim | 2 |
+| escola (dia da prova) | 2 | alunos avaliados e presença na prova na escola | sim | | |
+| Censo Escolar | 10 | formação docente, alunos por turma, distorção idade-série | sim | sim | 3 |
+| rendimento escolar | 5 | aprovação, reprovação e abandono nos anos iniciais | sim | sim | 2 |
+| IDEB | 6 | última edição, edição anterior, nota de português, tendência | sim | sim | 2 |
+| socioeconômico | 5 | INSE médio e por nível, alunos em escolas rurais | sim | sim | 2 |
+| território e renda | 9 | população, área, densidade, capital, PIB per capita, composição da economia | sim | sim | 3 |
+| categóricas | 2 | UF (one-hot); rede só no aluno | sim | UF | |
+
+Colunas da ABT que ficam fora dos modelos (alvos, redundâncias, defasagens duplas que só existem a partir de 2025, metadados) estão listadas no dicionário com o motivo de cada exclusão.
 
 ## 4. Pipeline do projeto
 
